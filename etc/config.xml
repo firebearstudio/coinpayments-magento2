@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
+ * @author   : Firebear Studio <fbeardev@gmail.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <coin_payments>
+                <active>1</active>
+                <model>Firebear\CoinPayments\Model\Methods\Coinpayments</model>
+                <order_status>pending</order_status>
+                <title>Coin Payments</title>
+                <allowspecific>0</allowspecific>
+                <group>coinpayments</group>
+            </coin_payments>
+        </payment>
+        <coinpayment>
+            <conf>
+                <url_payment>https://www.coinpayments.net</url_payment>
+            </conf>
+        </coinpayment>
+    </default>`
+</config>

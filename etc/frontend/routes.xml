@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
+ * @author   : Firebear Studio <fbeardev@gmail.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="coinpayments" frontName="coinpayments">
+            <module name="Firebear_CoinPayments" />
+        </route>
+    </router>
+</config>

@@ -1,0 +1,36 @@
+<?php
+/**
+ * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
+ * @author   : Firebear Studio <fbeardev@gmail.com>
+ */
+
+// Retrieve order
+$_order = $block->getOrder();
+$orderId = $block->getRealOrderId();
+var_dump($orderId);
+?>
+<!--<form name="coinpaymentsform" method="post" action="https://www.coinpayments.net/index.php">
+	<input type="hidden" name="cmd" value="_pay">
+	<input type="hidden" name="reset" value="1">
+	<input type="hidden" name="merchant" value="<?php /*echo htmlspecialchars(Mage::getStoreConfig('payment/coinpayments/merchant_id'), ENT_QUOTES, 'utf-8'); */?>">
+	<input type="hidden" name="item_name" value="<?php /*echo htmlspecialchars(Mage::app()->getStore()->getName(), ENT_QUOTES, 'utf-8'); */?> Order">
+	<input type="hidden" name="invoice" value="<?php /*echo $orderId; */?>">
+	<input type="hidden" name="custom" value="<?php /*echo Mage::app()->getStore()->getStoreId(); */?>">
+	<input type="hidden" name="quantity" value="1">
+	<input type="hidden" name="allow_quantity" value="0">
+	<input type="hidden" name="want_shipping" value="0">
+  <input type="hidden" name="currency" value="<?php /*echo htmlspecialchars($_order->getBaseCurrency()->getCode(), ENT_QUOTES, 'utf-8'); */?>">
+  <input type="hidden" name="shippingf" value="<?php /*echo $_order->getBaseShippingAmount(); */?>">
+  <input type="hidden" name="taxf" value="<?php /*echo $_order->getBaseTaxAmount(); */?>">
+  <input type="hidden" name="amountf" value="<?php /*echo $_order->getBaseGrandTotal() - $_order->getBaseShippingAmount() - $_order->getBaseTaxAmount(); */?>">
+  <input type="hidden" name="success_url" value="<?php /*echo htmlspecialchars(Mage::getUrl('checkout/onepage/success', array('_secure'=>true)), ENT_QUOTES, 'utf-8'); */?>">
+  <input type="hidden" name="cancel_url" value="<?php /*echo htmlspecialchars(Mage::getUrl('checkout/onepage/failure', array('_secure'=>true)), ENT_QUOTES, 'utf-8'); */?>">
+  <input type="hidden" name="ipn_url" value="<?php /*echo htmlspecialchars(Mage::getUrl('coinpayments/payment/response', array('_secure'=>true)), ENT_QUOTES, 'utf-8'); */?>">
+  <input type="hidden" name="email" value="<?php /*echo htmlspecialchars($_order->getData('customer_email'), ENT_QUOTES, 'utf-8'); */?>">
+  <input type="hidden" name="first_name" value="<?php /*echo htmlspecialchars($_order->getData('customer_firstname'), ENT_QUOTES, 'utf-8'); */?>">
+  <input type="hidden" name="last_name" value="<?php /*echo htmlspecialchars($_order->getData('customer_lastname'), ENT_QUOTES, 'utf-8'); */?>">
+  <noscript><input type="submit" value="Click here to complete checkout at CoinPayments.net"></noscript>
+</form>
+<script type="text/javascript">
+document.coinpaymentsform.submit();
+</script>-->
