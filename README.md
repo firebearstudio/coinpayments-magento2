@@ -14,7 +14,7 @@
 <p><img src="{{media url="wysiwyg/Magento_2_Backend_Config_Coinpayments.jpg"}}" alt="magento 2 bitcoin" width="515" /></p>
 <p><img src="{{media url="wysiwyg/Magento_2_Backend_Config_Coinpayments_country_selection.jpg"}}" alt="magento 2 ethereum" width="515" /></p>
 <p dir="ltr"><span>From the frontend perspective, you should add a product to cart and proceed to checkout. Complete the first step in order to be able to select a payment method. Select "Coin Payments" and you will see the following message:</span></p>
-<p><img src="{{media url="wysiwyg/Magento_2_CoinPayments_Configuration_checkout.gif"}}" alt="magento 2 bitcoin checkout" width="515" /></p>
+<p><img src="https://firebearstudio.com/media/wysiwyg/Magento_2_CoinPayments_Configuration_checkout.gif" alt="magento 2 bitcoin checkout" width="515" /></p>
 <p dir="ltr"><span>Now, you are on the CoinPayments platform. Specify your first name, last name, and email, choose your altcoin, and complete the checkout. Alternatively, you can cancel it and return to seller's store, contact seller directly from the cryptocurrency payment gateway page, or view profile.</span></p>
-<p><img src="{{media url="wysiwyg/Magento_2_Coinpayments_checkout.jpg"}}" alt="magento 2 coin payments checkout - bitcoin &amp; ethereum" width="515" /></p>
-<p><img src="{{media url="wysiwyg/Checkout_last_step.jpg"}}" alt="send bitcoin magento 2" width="515" /></p>
+<p><img src="https://firebearstudio.com/media/wysiwyg/Magento_2_Backend_Config_Coinpayments_country_selection.jpg" alt="magento 2 coin payments checkout - bitcoin &amp; ethereum" width="515" /></p>
+<p><img src="https://firebearstudio.com/media/wysiwyg/Checkout_last_step.jpg" alt="send bitcoin magento 2" width="515" /></p>
