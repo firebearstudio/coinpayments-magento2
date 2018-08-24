@@ -123,6 +123,8 @@ class Index extends \Magento\Framework\App\Action\Action
                     true,
                     $str
                 )->setStatus($this->helper->getGeneralConfig('status_order_paid'));
+                $this->_objectManager->create('\Magento\Sales\Model\OrderNotifier')
+                    ->notify($order);
             } else {
                 //order pending
                 $order->setState(
@@ -133,6 +135,7 @@ class Index extends \Magento\Framework\App\Action\Action
                     )
                 )->setStatus(Order::STATE_PROCESSING);
             }
+            $order->save();
         }
     }
 
