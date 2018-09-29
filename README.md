@@ -17,16 +17,16 @@ Composer driven installation coming soon , for now please use manual approach de
 3. Unzip (extract from zip archive) file and copy to /app/code/Firebear/CoinPayments/ folder (create it manually!)<br />
 4. Navigate to your store root folder in the SSH console of your server:<br /><br />
 
-cd path_to_the_store_root_folder<br /><br />
+cd path_to_the_store_root_folder<br />
 
-And run the following commands:<br /><br />
+And run the following commands:<br />
 
 php -f bin/magento module:enable Firebear_CoinPayments<br />
-php -f bin/magento setup:upgrade<br /><br />
+php -f bin/magento setup:upgrade<br />
 
-5. Now, you have to flush store cache; log out from your backend and login once again. Use the following command:<br /><br />
+5. Now, you have to flush store cache; log out from your backend and login once again. Use the following command:<br />
 
-php -f bin/magento cache:clean<br /><br /><br />
+php -f bin/magento cache:clean<br /><br />
 
 Congratulations! The Firebear CoinPayments Magento 2 Bitcoin/Ethereum/Altcoin module is successfully installed. Now, you should configure your new Magento 2 cryptocurrency payment gateway.
 
