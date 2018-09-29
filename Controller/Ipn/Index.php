@@ -61,7 +61,7 @@ class Index extends \Magento\Framework\App\Action\Action
                 $order_id = (int)$this->getRequest()->getParam('invoice');
                 if ($order = $this->orderRepository->get($order_id)) {
                     if ($order->getState() == Order::STATE_NEW) {
-                        if ($this->getRequest()->getParam('ipn_type') == 'button') {
+                        if ($this->getRequest()->getParam('ipn_type') == 'button' || $this->getRequest()->getParam('ipn_type') == 'simple') {
                             if ($this->getRequest()->getParam('currency1') == $order->getBaseCurrencyCode()) {
                                 if ($this->getRequest()->getParam('amount1') >= $order->getBaseGrandTotal()) {
                                     $status = (int)$this->getRequest()->getParam('status');
@@ -171,13 +171,7 @@ class Index extends \Magento\Framework\App\Action\Action
                 return true;
             }
         } else {
-            if ($ipn['ipn_mode'] == 'httpauth' && $this->helper->getGeneralConfig('ipn_mode') == 1) {
-                if ($this->checkHttpauthIpn($ipn)) {
-                    return true;
-                }
-            } else {
-                $this->logAndDie('Unknown ipn_mode.');
-            }
+            $this->logAndDie('Unknown ipn_mode.');
         }
 
         return false;
@@ -226,39 +220,5 @@ class Index extends \Magento\Framework\App\Action\Action
         }
 
         return true;
-    }
-
-    private function checkHttpauthIpn($ipn)
-    {
-        if (isset($_SERVER['PHP_AUTH_USER'])
-            && $_SERVER['PHP_AUTH_USER'] == trim(
-                $this->helper->getGeneralConfig('merchant_id')
-            )
-        ) {
-            if (isset($_SERVER['PHP_AUTH_PW'])
-                && $_SERVER['PHP_AUTH_PW'] == trim(
-                    $this->helper->getGeneralConfig('ipn_secret')
-                )
-            ) {
-                $merchant = isset($ipn['merchant']) ? $ipn['merchant'] : '';
-                if (empty($merchant)) {
-                    $this->logAndDie('No Merchant ID passed');
-                }
-                if ($merchant != trim($this->helper->getGeneralConfig('merchant_id'))) {
-                    $this->logAndDie('Invalid Merchant ID');
-                }
-
-                return true;
-            } else {
-                $this->logAndDie(
-                    'IPN Secret not correct or no HTTP Auth variables passed. If you are using PHP in CGI mode try the HMAC method.'
-                );
-            }
-        } else {
-            $this->logAndDie(
-                'Merchant ID not correct or no HTTP Auth variables passed. If you are using PHP in CGI mode try the HMAC method.'
-            );
-        }
-        return false;
     }
 }

@@ -9,7 +9,7 @@
     <system>
         <section id="payment">
             <group id="coin_payments" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Coin Payment</label>
+                <label>CoinPayments.net</label>
 
                 <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable</label>
@@ -27,12 +27,6 @@
                 <field id="ipn_secret" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>IPN Secret</label>
                     <comment><![CDATA[Pre-shared secret key to secure the transaction. Your IPN Secret should be a good random string and should match here and on your Edit Settings page at CoinPayments.net.]]></comment>
-                </field>
-
-                <field id="ipn_mode" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Allow HTTPAUTH IPN Authentication Mode</label>
-                    <comment><![CDATA[It is recommended to leave this set to No unless your server can't support HMAC mode. Make sure this setting matches the setting on your Edit Settings page at CoinPayments.net.]]></comment>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
                 <field id="ipn_debug" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
