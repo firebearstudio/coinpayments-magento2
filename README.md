@@ -1,3 +1,5 @@
+<h2>Download</h2>
+Grab the latest version by clicking the Releases tab. Then come back here for installation instructions.
 <h2>Overview</h2>
 <p dir="ltr"><span>Meet the best way to accept cryptocurrency on <strong>Magento 2</strong>. With <strong>Firebear CoinPayments Magento 2</strong> extension, you will easily integrate your ecommerce store with the popular cryptocurrency gateway accepting over 70 altcoins, including Bitcoin and Ethereum. Thus, Magento 2 cryptocurrency trading is no longer an unattainable goal - it is a new way of business dealing.</span></p>
 <p dir="ltr"><strong>Features</strong></p>
