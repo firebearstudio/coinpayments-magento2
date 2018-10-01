@@ -133,7 +133,7 @@ class Index extends \Magento\Framework\App\Action\Action
                     Order::STATE_NEW,
                     true,
                     $str
-                )->setStatus(Order::STATE_NEW);
+                )->setStatus(Order::STATE_PROCESSING);
             }
             $order->save();
         }
