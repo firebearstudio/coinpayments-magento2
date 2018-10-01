@@ -37,12 +37,12 @@ $failUrl     = $block->getFailUrl();
         'utf-8'
     ); ?>">
     <input type="hidden" name="first_name" value="<?php echo htmlspecialchars(
-        $quoteData->getCustomerFirstname(),
+        $quoteData->getBillingAddress()->getFirstname(),
         ENT_QUOTES,
         'utf-8'
     ); ?>">
     <input type="hidden" name="last_name" value="<?php echo htmlspecialchars(
-        $quoteData->getCustomerLastname(),
+        $quoteData->getBillingAddress()->getLastname(),
         ENT_QUOTES,
         'utf-8'
     ); ?>">

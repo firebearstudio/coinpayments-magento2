@@ -118,22 +118,22 @@ class Index extends \Magento\Framework\App\Action\Action
                     . ' ' . $this->getRequest()->getParam('currency1') . '<br />';
                 $str .= 'Received Amount: ' . sprintf('%.08f', $this->getRequest()->getParam('amount2'))
                     . ' ' . $this->getRequest()->getParam('currency2');
+                $order->addStatusToHistory($this->helper->getGeneralConfig('status_order_paid'), $str, true);
                 $order->setState(
                     $this->helper->getGeneralConfig('status_order_paid'),
                     true,
                     $str
                 )->setStatus($this->helper->getGeneralConfig('status_order_paid'));
-                $this->_objectManager->create('\Magento\Sales\Model\OrderNotifier')
-                    ->notify($order);
+                $this->_objectManager->create('\Magento\Sales\Model\OrderNotifier')->notify($order);
             } else {
                 //order pending
+                $str = 'CoinPayments.net Payment Status: ' . $this->getRequest()->getParam('status_text');
+                $order->addStatusToHistory(Order::STATE_NEW, $str, true);
                 $order->setState(
                     Order::STATE_NEW,
                     true,
-                    'CoinPayments.net Payment Status: ' . $this->getRequest()->getParam(
-                        'status_text'
-                    )
-                )->setStatus(Order::STATE_PROCESSING);
+                    $str
+                )->setStatus(Order::STATE_NEW);
             }
             $order->save();
         }

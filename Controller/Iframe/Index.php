@@ -56,7 +56,7 @@ class Index extends \Magento\Framework\App\Action\Action
             'coinpayment/conf/url_payment',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-        $html           = 'You will be transfered to <a href="'.$coinpaymentUrl.'" target="_blank\">coinpayments.net</a> to complete your purchase when using this payment method.';
+        $html           = 'You will be transfered to <a href="'.$coinpaymentUrl.'" target="_blank\">CoinPayments.net</a> to complete your purchase when using this payment method.';
         $this->getResponse()->setBody(json_encode(['html' => $html]));
     }
 }
