@@ -1,6 +1,6 @@
 {
-  "name": "firebear/coinpayments",
-  "description": "Add new payment method for coinpayments.com",
+  "name": "coinpaymentsnet/magento2",
+  "description": "Add new payment method for CoinPayments.net",
   "require": {
     "php": "~5.5.0|~5.6.0|~7.0.0|~7.1"
   },
