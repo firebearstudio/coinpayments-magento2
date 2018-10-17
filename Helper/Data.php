@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Helper;
+namespace Coinpayments\CoinPayments\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;

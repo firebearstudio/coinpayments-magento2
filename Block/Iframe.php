@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Block;
+namespace Coinpayments\CoinPayments\Block;
 
 class Iframe extends \Magento\Framework\View\Element\Template
 {

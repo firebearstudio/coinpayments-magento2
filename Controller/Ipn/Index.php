@@ -4,12 +4,12 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Controller\Ipn;
+namespace Coinpayments\CoinPayments\Controller\Ipn;
 
 use Magento\Sales\Model\Order;
 use Magento\Framework\App\Action\Context;
-use Firebear\CoinPayments\Logger\Logger;
-use Firebear\CoinPayments\Helper\Data as CoinPaymentHelper;
+use Coinpayments\CoinPayments\Logger\Logger;
+use Coinpayments\CoinPayments\Helper\Data as CoinPaymentHelper;
 
 /**
  * Class Index

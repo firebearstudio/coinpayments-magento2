@@ -11,7 +11,7 @@
         <payment>
             <coin_payments>
                 <active>1</active>
-                <model>Firebear\CoinPayments\Model\Methods\Coinpayments</model>
+                <model>Coinpayments\CoinPayments\Model\Methods\Coinpayments</model>
                 <order_status>pending</order_status>
                 <title>Coin Payments</title>
                 <allowspecific>0</allowspecific>

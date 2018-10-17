@@ -15,14 +15,14 @@ define(
         'Magento_Checkout/js/checkout-data',
         'Magento_Checkout/js/model/payment/additional-validators',
         'mage/url',
-        'Firebear_CoinPayments/js/action/set-payment-method',
+        'Coinpayments_CoinPayments/js/action/set-payment-method',
         'Magento_Checkout/js/model/full-screen-loader'
     ],
     function (ko,Component, quote,$,placeOrderAction,selectPaymentMethodAction,customer, checkoutData, additionalValidators, url,setPaymentMethodAction,fullScreenLoader) {
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Firebear_CoinPayments/payment/coin_payment'
+                template: 'Coinpayments_CoinPayments/payment/coin_payment'
             },
             getCode: function() {
                 return 'coin_payments';

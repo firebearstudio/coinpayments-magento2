@@ -1,6 +1,6 @@
 <?php
 
-namespace Firebear\CoinPayments\Controller\Checkout;
+namespace Coinpayments\CoinPayments\Controller\Checkout;
 
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Order;

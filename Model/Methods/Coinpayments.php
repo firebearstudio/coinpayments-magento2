@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Model\Methods;
+namespace Coinpayments\CoinPayments\Model\Methods;
 
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\HTTP\ZendClientFactory;
@@ -31,9 +31,9 @@ class Coinpayments extends AbstractMethod
 
     /* Uncomment if need using blocks
 
-    protected $_formBlockType               = 'Firebear\CoinPayments\Block\Form\Coinpayments';
+    protected $_formBlockType               = 'Coinpayments\CoinPayments\Block\Form\Coinpayments';
 
-    protected $_infoBlockType               = 'Firebear\CoinPayments\Block\Info';*/
+    protected $_infoBlockType               = 'Coinpayments\CoinPayments\Block\Info';*/
     
 
     /**

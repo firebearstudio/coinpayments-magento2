@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Controller\Iframe;
+namespace Coinpayments\CoinPayments\Controller\Iframe;
 
 class Index extends \Magento\Framework\App\Action\Action
 {

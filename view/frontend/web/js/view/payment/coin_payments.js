@@ -14,7 +14,7 @@ define(
         rendererList.push(
             {
                 type: 'coin_payments',
-                component: 'Firebear_CoinPayments/js/view/payment/method-renderer/coin-method'
+                component: 'Coinpayments_CoinPayments/js/view/payment/method-renderer/coin-method'
             }
         );
         return Component.extend({});
