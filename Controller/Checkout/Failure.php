@@ -43,7 +43,7 @@ class Failure extends \Magento\Framework\App\Action\Action
         $order       = $this->orderRepository->get($lastOrderId);
         $order->setStatus(Order::STATE_CANCELED)->setState(Order::STATE_CANCELED);
         $this->orderRepository->save($order);
-        $this->logger->info('ORDER INFO kjgjkgjkghjgjhggjh: ' . $order->getStatus() . $order->getState());
+        $this->logger->info('ORDER INFO: ' . $order->getStatus() . $order->getState());
 
         return $this->resultPageFactory->create();
     }

@@ -20,7 +20,6 @@ class Iframe extends \Magento\Framework\View\Element\Template
      * @var \Magento\Quote\Model\QuoteRepository
      */
     protected $quoteRepository;
-
     /**
      * Iframe constructor.
      * @param \Magento\Framework\View\Element\Template\Context $context

@@ -20,4 +20,6 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Coinpayments\CoinPayments\Api\CurrencyManagementInterface" type="Coinpayments\CoinPayments\Model\Currency"/>
+    <preference for="Coinpayments\CoinPayments\Api\TransactionInterface" type="Coinpayments\CoinPayments\Model\Transaction"/>
 </config>

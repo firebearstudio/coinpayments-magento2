@@ -1,15 +1,12 @@
-/**
- * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
- * @author   : Firebear Studio <fbeardev@gmail.com>
- */
-
 define(
     [
         'uiComponent',
         'Magento_Checkout/js/model/payment/renderer-list'
     ],
-    function (Component,
-              rendererList) {
+    function (
+        Component,
+        rendererList
+    ) {
         'use strict';
         rendererList.push(
             {
@@ -17,6 +14,7 @@ define(
                 component: 'Coinpayments_CoinPayments/js/view/payment/method-renderer/coin-method'
             }
         );
+        /** Add view logic here if needed */
         return Component.extend({});
     }
 );
