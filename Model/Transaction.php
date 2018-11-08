@@ -115,45 +115,6 @@ class Transaction implements TransactionInterface
         $this->_curl->post($coinpaymentsApi, $data);
         $response = json_decode($this->_curl->getBody());
 
-        if ($response->error == 'OK') {
-            $this->addTransactionToOrder($order, $response);
-        }
-
         return $response;
-    }
-
-    public function addTransactionToOrder(Order $order, $paymentData) {
-        try {
-            $payment = $order->getPayment();
-            $payment->setMethod($this->_coinpaymentsModel->getCode());
-            $payment->setLastTransId($paymentData['txn_id']);
-            $payment->setTransactionId($paymentData['txn_id']);
-            $payment->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array) $paymentData]);
-
-            $formatedPrice = $order->getBaseCurrency()->formatTxt($order->getGrandTotal());
-
-            /* @var BuilderInterface */
-            $transaction = $this->_transactionBuilder
-                ->setPayment($payment)
-                ->setOrder($order)
-                ->setTransactionId($paymentData['txn_id'])
-                ->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array) $paymentData])
-                ->setFailSafe(true)
-                ->build(Order\Payment\Transaction::TYPE_CAPTURE);
-
-            // Add transaction to payment
-            $payment->addTransactionCommentsToOrder($transaction, __('The authorized amount is %1.', $formatedPrice));
-            $payment->setParentTransactionId(null);
-
-            // Save payment, transaction and order
-            $payment->save();
-            $order->save();
-            $transaction->save();
-
-            return  $transaction->getTransactionId();
-
-        } catch (\Exception $e) {
-            $this->_logger->info("Create transaction error. OrderId: " . $order->getId() . "\n. Message: " . $e->getMessage());
-        }
     }
 }

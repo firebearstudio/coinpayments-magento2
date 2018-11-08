@@ -5,6 +5,7 @@ namespace Coinpayments\CoinPayments\Model;
 use Coinpayments\CoinPayments\Helper\Data;
 use Magento\Sales\Model\Order;
 use Coinpayments\CoinPayments\Logger\Logger;
+use Coinpayments\CoinPayments\Model\Methods\Coinpayments;
 
 
 class AbstractIpn
@@ -21,6 +22,10 @@ class AbstractIpn
 
     protected $_hmac;
 
+    protected $_coinpaymentsModel;
+
+    protected $_transactionBuilder;
+
     /**
      * @var Order
      */
@@ -29,12 +34,17 @@ class AbstractIpn
     public function __construct(
         Order $orderModel,
         Data $helper,
-        Logger $logger
+        Logger $logger,
+        Coinpayments $coinpaymentsModel,
+        Order\Payment\Transaction\BuilderInterface $transactionBuilder
     )
     {
         $this->_orderModel = $orderModel;
         $this->_helper = $helper;
         $this->_logger = $logger;
+        $this->_coinpaymentsModel = $coinpaymentsModel;
+        $this->_transactionBuilder = $transactionBuilder;
+
     }
 
     protected function filterPaymentStatus($status)
@@ -135,6 +145,48 @@ class AbstractIpn
         }
         return $this;
     }
+
+    protected function addTransactionToOrder()
+    {
+        if ($this->filterPaymentStatus($this->_data->status) != Info::PAYMENT_STATUS_COMPLETE) {
+            return false;
+        }
+        try {
+            $payment = $this->_currentOrder->getPayment();
+            $payment->setMethod($this->_coinpaymentsModel->getCode());
+            $payment->setLastTransId($this->_data->txn_id);
+            $payment->setTransactionId($this->_data->txn_id);
+            $payment->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array)$this->_data]);
+
+            $formatedPrice = $this->_currentOrder->getBaseCurrency()->formatTxt($this->_currentOrder->getGrandTotal());
+
+            /* @var Order\Payment\Transaction\BuilderInterface */
+            $transaction = $this->_transactionBuilder
+                ->setPayment($payment)
+                ->setOrder($this->_currentOrder)
+                ->setTransactionId($this->_data->txn_id)
+                ->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array)$this->_data])
+                ->setFailSafe(true)
+                ->build(Order\Payment\Transaction::TYPE_CAPTURE);
+
+            // Add transaction to payment
+            $payment->addTransactionCommentsToOrder($transaction, __('The authorized amount is %1.', $formatedPrice));
+            $payment->setParentTransactionId(null);
+
+            // Save payment, transaction and order
+            $payment->save();
+            $this->_currentOrder->save();
+            $transaction->save();
+            $this->logAndDie("Create transaction. OrderId: " . $this->_currentOrder->getId() . "\n. Transaction Id: " . $transaction->getTransactionId());
+            return  $transaction->getTransactionId();
+
+        } catch (\Exception $e) {
+            $this->logAndDie("Create transaction error. OrderId: " . $this->_currentOrder->getId() . "\n. Message: " . $e->getMessage());
+        }
+
+        return true;
+    }
+
     /**
      * @return $this
      */
