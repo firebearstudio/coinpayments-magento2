@@ -62,8 +62,7 @@ class Iframe extends \Magento\Framework\View\Element\Template
      */
     public function getIpnUrl()
     {
-        $quoteModel = $this->getQuote();
-        return $this->getUrl('coinpayments/ipn/index');
+        return $this->getUrl('coinpayments/ipn/handle');
     }
 
     /**

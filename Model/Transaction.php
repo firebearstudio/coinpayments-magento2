@@ -2,12 +2,15 @@
 namespace Coinpayments\CoinPayments\Model;
 
 use Coinpayments\CoinPayments\Api\TransactionInterface;
+use Coinpayments\CoinPayments\Logger\Logger;
+use Coinpayments\CoinPayments\Model\Methods\Coinpayments;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Model\Order;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\UrlInterface;
+use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 
 class Transaction implements TransactionInterface
 {
@@ -23,6 +26,12 @@ class Transaction implements TransactionInterface
     protected $_scopeConfig;
     /* @var UrlInterface */
     protected $_urlBuilder;
+    /* @var Coinpayments */
+    protected $_coinpaymentsModel;
+    /* @var TransactionBuilder */
+    protected $_transactionBuilder;
+    /* @var Logger */
+    protected $_logger;
 
     /**
      * Transaction constructor.
@@ -39,7 +48,10 @@ class Transaction implements TransactionInterface
         Curl $curl,
         ScopeConfigInterface $scopeConfig,
         Order $orderModel,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        Coinpayments $coinpaymentsModel,
+        BuilderInterface $transactionBuilder,
+        Logger $logger
     )
     {
         $this->_quoteFactory = $quoteFactory;
@@ -48,6 +60,9 @@ class Transaction implements TransactionInterface
         $this->_scopeConfig = $scopeConfig;
         $this->_orderModel = $orderModel;
         $this->_urlBuilder = $urlBuilder;
+        $this->_coinpaymentsModel = $coinpaymentsModel;
+        $this->_transactionBuilder = $transactionBuilder;
+        $this->_logger = $logger;
     }
 
     /**
@@ -92,7 +107,7 @@ class Transaction implements TransactionInterface
             'buyer_email' => $order->getCustomerEmail(),
             'buyer_name' => $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname(),
             'invoice' => $order->getIncrementId(),
-            'ipn_url' => $this->_urlBuilder->getUrl('coinpayments/ipn/index')
+            'ipn_url' => $this->_urlBuilder->getUrl('coinpayments/ipn/handle')
         ];
 
         $this->_curl->addHeader('HMAC', hash_hmac('sha512', http_build_query($data), $secretKey));
@@ -100,6 +115,45 @@ class Transaction implements TransactionInterface
         $this->_curl->post($coinpaymentsApi, $data);
         $response = json_decode($this->_curl->getBody());
 
+        if ($response->error == 'OK') {
+            $this->addTransactionToOrder($order, $response);
+        }
+
         return $response;
+    }
+
+    public function addTransactionToOrder(Order $order, $paymentData) {
+        try {
+            $payment = $order->getPayment();
+            $payment->setMethod($this->_coinpaymentsModel->getCode());
+            $payment->setLastTransId($paymentData['txn_id']);
+            $payment->setTransactionId($paymentData['txn_id']);
+            $payment->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array) $paymentData]);
+
+            $formatedPrice = $order->getBaseCurrency()->formatTxt($order->getGrandTotal());
+
+            /* @var BuilderInterface */
+            $transaction = $this->_transactionBuilder
+                ->setPayment($payment)
+                ->setOrder($order)
+                ->setTransactionId($paymentData['txn_id'])
+                ->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array) $paymentData])
+                ->setFailSafe(true)
+                ->build(Order\Payment\Transaction::TYPE_CAPTURE);
+
+            // Add transaction to payment
+            $payment->addTransactionCommentsToOrder($transaction, __('The authorized amount is %1.', $formatedPrice));
+            $payment->setParentTransactionId(null);
+
+            // Save payment, transaction and order
+            $payment->save();
+            $order->save();
+            $transaction->save();
+
+            return  $transaction->getTransactionId();
+
+        } catch (\Exception $e) {
+            $this->_logger->info("Create transaction error. OrderId: " . $order->getId() . "\n. Message: " . $e->getMessage());
+        }
     }
 }

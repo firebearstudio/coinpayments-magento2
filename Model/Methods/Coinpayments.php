@@ -53,4 +53,9 @@ class Coinpayments extends AbstractMethod
     {
         return (bool)(int)$this->getConfigData('active', $storeId);
     }
+
+    public function getCode()
+    {
+        return $this->_code;
+    }
 }
