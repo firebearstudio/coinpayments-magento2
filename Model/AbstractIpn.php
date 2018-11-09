@@ -192,7 +192,7 @@ class AbstractIpn
      */
     protected function addToOrderHistory()
     {
-        $str = 'CoinPayments.net Payment Status: <strong>1</strong> ' . $this->_data->status_text . '<br />';
+        $str = 'CoinPayments.net Payment Status: <strong>' . $this->_data->status . '</strong> ' . $this->_data->status_text . '<br />';
 
         if ($this->_data->status == Info::PAYMENT_STATUS_COMPLETE) {
             $str .= 'Transaction ID: ' . $this->_data->txn_id
