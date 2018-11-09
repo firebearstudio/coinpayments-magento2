@@ -33,21 +33,21 @@ class Ipn extends AbstractIpn implements IpnInterface
 
         if (!$order) {
             $error['order'] = __('Order is not longer exist');
-            $this->logAndDie(__('Order is not longer exist'));
+            $this->logAndDie($error['order']);
             return $error;
         }
 
         if (!$this->filterIpnType()) {
             $error['ipn_type'] = __('Invalid IPN type');
-            $this->logAndDie(__('Invalid IPN type'));
+            $this->logAndDie($error['ipn_type']);
             return $error;
         }
 
-//        if (!$this->checkHmac()) {
-//            $error['hmac'] = __('Invalid HMAC signature');
-//            $this->logAndDie(__('Invalid HMAC signature'));
-//            return $error;
-//        }
+        if (!$this->checkHmac()) {
+            $error['hmac'] = __('Invalid HMAC signature');
+            $this->logAndDie($error['hmac']);
+            return $error;
+        }
 
         $this
             ->updateOrderPayment()
@@ -58,8 +58,8 @@ class Ipn extends AbstractIpn implements IpnInterface
         try {
             $order->save();
         } catch (\Exception $e) {
-            $this->logAndDie(__('Error when save Order'));
             $error['order_save'] = __('Error when save Order');
+            $this->logAndDie($error['order_save']);
             return $error;
         }
         $this->logAndDie(__('SUCCESS UPDATE ORDER'));
