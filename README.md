@@ -14,26 +14,19 @@ Grab the latest version by clicking the Releases tab. Then come back here for in
 <h2>Installation</h2>
 Composer driven installation coming soon , for now please use manual approach described below.<br /><br />
 
-1. Create backups of your web directory and Magento 2 store database;<br />
-2. Download Coinpayments CoinPayments Magento 2 Extension installation package;<br />
-3. Unzip (extract from zip archive) file and copy to /app/code/Coinpayments/CoinPayments/ folder (create it manually!)<br />
-4. Navigate to your store root folder in the SSH console of your server:<br /><br />
-
-cd path_to_the_store_root_folder<br />
-
-And run the following commands:<br />
-
-php -f bin/magento module:enable Coinpayments_CoinPayments<br />
-php -f bin/magento setup:upgrade<br />
-
-5. Now, you have to flush store cache; log out from your backend and login once again. Use the following command:<br />
-
-php -f bin/magento cache:clean<br /><br />
-
+<h4>To install module through composer please type:</h4>
+<ol>
+    <li>cd /your/magento2/dir</li>
+    <li>Add module to composer.json - <strong>composer require coinpaymentsnet/magento2</strong></li>
+    <li>Reinstall composer - <strong>composer install</strong></li>
+    <li>Enable Coinpayments module - <strong>bin/magento module:enable Coinpayments_Coinpayments</strong></li>
+    <li>Upgrade your modules - <strong>bin/magento setup:upgrade</strong></li>
+    <li>Flush cache - <strong>bin/magento c:f</strong></li>
+</ol>
+<h4>Setting Up</h4>
+<ul>
+    <li>Login to your admin account</li>
+    <li>Follow this way Stores->Configuration->Payment->Payment Methods</li>
+    <li>Put values int to the form. Keys you can find in your account here <a href="https://www.coinpayments.net/">Coinpayments</a></li>
+</ul>
 Congratulations! The Coinpayments CoinPayments Magento 2 Bitcoin/Ethereum/Altcoin module is successfully installed. Now, you should configure your new Magento 2 cryptocurrency payment gateway.
-
-<h2>User Experience</h2>
-<p dir="ltr"><span>From the frontend perspective, you should add a product to cart and proceed to checkout. Complete the first step in order to be able to select a payment method. Select "Coin Payments" and you will see the following message:</span></p>
-<p><img src="https://firebearstudio.com/media/wysiwyg/Magento_2_CoinPayments_Configuration_checkout.gif" alt="magento 2 bitcoin checkout" width="515" /></p>
-<p dir="ltr"><span>Now, you are on the CoinPayments platform. Choose your altcoin, and complete the checkout. Alternatively, you can cancel it and return to seller's store, contact seller directly from the cryptocurrency payment gateway page, or view profile.</span></p>
-<p><img src="https://firebearstudio.com/media/wysiwyg/Checkout_last_step.jpg" alt="send bitcoin magento 2" width="515" /></p>
