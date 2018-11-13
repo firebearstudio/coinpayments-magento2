@@ -14,16 +14,16 @@ Grab the latest version by clicking the Releases tab. Then come back here for in
 <h2>Installation</h2>
 Composer driven installation coming soon , for now please use manual approach described below.<br /><br />
 
-<h4>To install module through composer please type:</h4>
+<h3>To install module through composer please type:</h3>
 <ol>
-    <li>cd /your/magento2/dir</li>
+    <li>Open your magento 2 dir - <strong>cd /your/magento2/dir</strong></li>
     <li>Add module to composer.json - <strong>composer require coinpaymentsnet/magento2</strong></li>
     <li>Reinstall composer - <strong>composer install</strong></li>
     <li>Enable Coinpayments module - <strong>bin/magento module:enable Coinpayments_Coinpayments</strong></li>
     <li>Upgrade your modules - <strong>bin/magento setup:upgrade</strong></li>
     <li>Flush cache - <strong>bin/magento c:f</strong></li>
 </ol>
-<h4>Setting Up</h4>
+<h3>Setting Up</h3>
 <ul>
     <li>Login to your admin account</li>
     <li>Follow this way Stores->Configuration->Payment->Payment Methods</li>
