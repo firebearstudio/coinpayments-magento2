@@ -22,6 +22,7 @@
             <conf>
                 <url_payment>https://www.coinpayments.net</url_payment>
                 <api_payment>https://www.coinpayments.net/api.php</api_payment>
+                <api_version>1</api_version>
             </conf>
         </coinpayment>
     </default>`
