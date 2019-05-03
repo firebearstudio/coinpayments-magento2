@@ -122,7 +122,12 @@ define(
                 if (!window.checkoutConfig.payment.coinpayments.available_currencies.error) {
                     return window.checkoutConfig.payment.coinpayments.available_currencies;
                 }
-
+                return [{error: "error"}];
+            },
+            getAcceptedCurrencies: function () {
+                if (!window.checkoutConfig.payment.coinpayments.accepted_currencies.error) {
+                    return window.checkoutConfig.payment.coinpayments.accepted_currencies;
+                }
                 return [{error: "error"}];
             },
             getPaymentAcceptanceMarkSrc: function () {

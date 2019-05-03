@@ -13,7 +13,7 @@
                             attr: {id: getCode() + '_crypto_currency', 'data-container': getCode() + '_crypto_currency'},
                             event: { change: getConvertedAmount},
                             enable: 1,
-                            options: getCurrencies(),
+                            options: getAcceptedCurrencies(),
                             optionsValue: 'value',
                             optionsText: 'name',
                             optionsCaption: $t('Currency')">
