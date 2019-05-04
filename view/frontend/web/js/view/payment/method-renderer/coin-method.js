@@ -143,6 +143,12 @@ define(
             getBaseGrandTotal: function () {
                 return window.checkoutConfig.totalsData.base_grand_total;
             },
+            getGrandTotal: function () {
+                return window.checkoutConfig.totalsData.grand_total;
+            },
+            getCurrencyCode: function () {
+                return window.checkoutConfig.totalsData.quote_currency_code;
+            },
             /**
              *
              * @param element

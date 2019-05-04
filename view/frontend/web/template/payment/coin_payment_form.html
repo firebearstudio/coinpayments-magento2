@@ -23,7 +23,7 @@
                 <div class="field no-label">
                     <div class="control">
                         <input
-                                data-bind="value: getBaseGrandTotal()"
+                                data-bind="value: getGrandTotal() + ' ' + getCurrencyCode()"
                                 class="input-text"
                                 id="converted_amount_coinpayments"
                                 type="text"
