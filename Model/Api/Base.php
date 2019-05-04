@@ -82,6 +82,10 @@ class Base
     {
         $paymentConf = $this->getPaymentConfig();
         $baseConf = $this->getBaseConfig();
+        
+        $paymentConf['public_key'] = isset($paymentConf['public_key']) ? $paymentConf['public_key'] : '';
+        $paymentConf['api_version'] = isset($paymentConf['api_version']) ? $paymentConf['api_version'] : '1';
+        
         $additionalData = [
             'version' => $baseConf['api_version'],
             'cmd' => $cmd,
