@@ -57,8 +57,8 @@ class Transaction extends Base
     {
         $data = [
             'amount' => $this->_rate->getConverted($customerCurrency, $order->getBaseGrandTotal()),
-            'currency1' => $customerCurrency,
-            'currency2' => $this->getPaymentConfig('receive_currency'),
+            'currency1' => $this->getPaymentConfig('receive_currency'),
+            'currency2' => $customerCurrency,
             'buyer_email' => $order->getCustomerEmail(),
             'buyer_name' => $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname(),
             'invoice' => $order->getIncrementId(),
