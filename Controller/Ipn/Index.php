@@ -10,13 +10,15 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\App\Action\Context;
 use Coinpayments\CoinPayments\Logger\Logger;
 use Coinpayments\CoinPayments\Helper\Data as CoinPaymentHelper;
+use Magento\Framework\App\Request\Http as HttpRequest;
+
 
 /**
  * Class Index
  *
  * @package Firebear\CoinPayments\Controller\Ipn
  */
-class Index extends \Magento\Framework\App\Action\Action implements \Magento\Framework\App\CsrfAwareActionInterface
+class Index extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var \Magento\Sales\Model\OrderRepository
@@ -47,21 +49,21 @@ class Index extends \Magento\Framework\App\Action\Action implements \Magento\Fra
         Logger $logger,
         CoinPaymentHelper $helper
     ) {
+        parent::__construct($context);
+        
         $this->orderRepository = $orderRepository;
         $this->log = $logger;
         $this->helper = $helper;
-        parent::__construct($context);
+        // Fix for Magento2.3 adding isAjax to the request params
+        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
+            $request = $this->getRequest();
+            if ($request instanceof HttpRequest && $request->isPost()) {
+                $request->setParam('isAjax', true);
+            }
+        }
+        
         
     }
-    public function createCsrfValidationException(\Magento\Framework\App\RequestInterface $request): ?\Magento\Framework\App\Request\InvalidRequestException
-        {
-            return null;
-        }
-        
-    public function validateForCsrf(\Magento\Framework\App\RequestInterface $request): ?bool
-        {
-            return true;
-        }
     
     
     public function execute()
