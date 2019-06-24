@@ -16,7 +16,7 @@ use Coinpayments\CoinPayments\Helper\Data as CoinPaymentHelper;
  *
  * @package Firebear\CoinPayments\Controller\Ipn
  */
-class Index extends \Magento\Framework\App\Action\Action
+class Index extends \Magento\Framework\App\Action\Action implements \Magento\Framework\App\CsrfAwareActionInterface
 {
     /**
      * @var \Magento\Sales\Model\OrderRepository
@@ -51,8 +51,19 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->log = $logger;
         $this->helper = $helper;
         parent::__construct($context);
+        
     }
-
+    public function createCsrfValidationException(\Magento\Framework\App\RequestInterface $request): ?\Magento\Framework\App\Request\InvalidRequestException
+        {
+            return null;
+        }
+        
+    public function validateForCsrf(\Magento\Framework\App\RequestInterface $request): ?bool
+        {
+            return true;
+        }
+    
+    
     public function execute()
     {
         if ($this->getRequest()->getParams()) {
