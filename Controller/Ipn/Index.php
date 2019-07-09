@@ -10,6 +10,8 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\App\Action\Context;
 use Coinpayments\CoinPayments\Logger\Logger;
 use Coinpayments\CoinPayments\Helper\Data as CoinPaymentHelper;
+use Magento\Framework\App\Request\Http as HttpRequest;
+
 
 /**
  * Class Index
@@ -47,12 +49,23 @@ class Index extends \Magento\Framework\App\Action\Action
         Logger $logger,
         CoinPaymentHelper $helper
     ) {
+        parent::__construct($context);
+        
         $this->orderRepository = $orderRepository;
         $this->log = $logger;
         $this->helper = $helper;
-        parent::__construct($context);
+        // Fix for Magento2.3 adding isAjax to the request params
+        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
+            $request = $this->getRequest();
+            if ($request instanceof HttpRequest && $request->isPost()) {
+                $request->setParam('isAjax', true);
+            }
+        }
+        
+        
     }
-
+    
+    
     public function execute()
     {
         if ($this->getRequest()->getParams()) {
