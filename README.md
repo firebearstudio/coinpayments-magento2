@@ -19,7 +19,7 @@ Composer driven installation coming soon , for now please use manual approach de
     <li>Open your magento 2 dir - <strong>cd /your/magento2/dir</strong></li>
     <li>Add module to composer.json - <strong>composer require coinpaymentsnet/magento2</strong></li>
     <li>Reinstall composer - <strong>composer install</strong></li>
-    <li>Enable Coinpayments module - <strong>bin/magento module:enable Coinpayments_Coinpayments</strong></li>
+    <li>Enable Coinpayments module - <strong>bin/magento module:enable Coinpayments_CoinPayments</strong></li>
     <li>Upgrade your modules - <strong>bin/magento setup:upgrade</strong></li>
     <li>Flush cache - <strong>bin/magento c:f</strong></li>
 </ol>
