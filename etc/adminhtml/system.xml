@@ -32,7 +32,7 @@
                     <label>Your CoinPayments.net Merchant ID</label>
                     <comment><![CDATA[You can find this by logging in to your CoinPayments.net  - Account -> Account Settings -> Basic Settings -> Your Merchant ID.]]></comment>
                 </field>
-                <field id="ipn_secret" translate="label" type="obscure" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="ipn_secret" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>IPN Secret</label>
                     <comment><![CDATA[Pre-shared secret key to secure the transaction. Your IPN Secret should be a good random string and should match here and on your Edit Settings page at CoinPayments.net.]]></comment>
                 </field>
@@ -40,7 +40,7 @@
                     <label>Public Key</label>
                     <comment><![CDATA[You can find in your CoinPayments account]]></comment>
                 </field>
-                <field id="secret_key" translate="label" type="obscure" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="secret_key" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Private Key</label>
                     <comment><![CDATA[You can find in your CoinPayments account]]></comment>
                 </field>
