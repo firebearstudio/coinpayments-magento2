@@ -1,0 +1,8 @@
+<script>
+    require([
+        'prototype'
+    ], function ($) {
+        window.coin_validate_invoice = '<?= /** @noEscape */ $block->getUrl('coinpayments/validation/invoice');?>';
+        window.coin_validate_webhooks = '<?= /** @noEscape */ $block->getUrl('coinpayments/validation/webhook');?>';
+    });
+</script>

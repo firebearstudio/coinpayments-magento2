@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <coin_payments>
+                <active>0</active>
+                <model>Coinpayments\CoinPayments\Model\Methods\Coinpayments</model>
+                <title>Coin Payments</title>
+                <allowspecific>0</allowspecific>
+                <group>coinpayments</group>
+            </coin_payments>
+        </payment>
+        <coinpayment>
+            <conf>
+                <api_url>https://orion-api-testnet.starhermit.com/api</api_url>
+                <api_version>1</api_version>
+            </conf>
+        </coinpayment>
+    </default>`
+</config>

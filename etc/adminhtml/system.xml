@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../Config/etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="coin_payments" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <fieldset_css>complex coin-payment-section</fieldset_css>
+                <frontend_model>Magento\Paypal\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
+                <label>
+                    <![CDATA[
+                    <div class="coin-payment-logo"></div>
+                    <div class="coin-payment-description">
+                        The convenient, trusted way to pay.<br/>
+                        Let your customers check out in just a few clicks or taps using the
+                            shipping and payment info already stored in their Coinpayments.Net account.
+                    </div>
+                    ]]>
+                </label>
+
+                <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="client_id" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0"
+                       showInStore="0">
+                    <label>Your CoinPayments.net Client ID</label>
+                    <validate>
+                        required-entry validate-length minimum-length-22 maximum-length-32 coin-invoice-validate
+                    </validate>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+
+                <field id="webhooks" translate="label comment" sortOrder="3" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Enable WebHooks</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+
+                <field id="client_secret" translate="label" type="text" sortOrder="4" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Your CoinPayments.net Client Secret</label>
+                    <validate>
+                        required-entry validate-length minimum-length-22 maximum-length-44 coin-webhooks-validate
+                    </validate>
+                    <depends>
+                        <field id="webhooks">1</field>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+
+                <field id="status_order_paid" translate="label,comment" type="select" sortOrder="5" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Paid order status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <validate>required-entry</validate>
+                    <comment>
+                        <![CDATA[Status of successfully paid order in Magento when CoinPayments recieved funds and sent confirmation to Magento.]]>
+                    </comment>
+                    <depends>
+                        <field id="webhooks">1</field>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+
+            </group>
+        </section>
+    </system>
+</config>
