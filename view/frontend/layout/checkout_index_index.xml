@@ -2,6 +2,12 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceContainer name="content">
+            <block template="Coinpayments_CoinPayments::js_vars.phtml"
+                   class="Magento\Backend\Block\Template"
+                   name="custom_js_backend"
+                   before="checkout.root"/>
+        </referenceContainer>
         <referenceBlock name="checkout.root">
             <arguments>
                 <argument name="jsLayout" xsi:type="array">

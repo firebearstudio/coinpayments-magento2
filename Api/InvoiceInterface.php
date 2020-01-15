@@ -20,8 +20,9 @@ interface InvoiceInterface
      * @param $currencyId
      * @param $invoiceId
      * @param $amount
+     * @param $displayValue
      * @return mixed
      */
-    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount);
+    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $displayValue);
 
 }

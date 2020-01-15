@@ -2,6 +2,7 @@
 
 namespace Coinpayments\CoinPayments\Controller\Adminhtml\Validation;
 
+use Coinpayments\CoinPayments\Helper\Data;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 
@@ -18,7 +19,7 @@ class WebHook extends Validation
         $params = $this->getRequest()->getParams();
         $response = [];
 
-        if (!empty($params['client_id']) && !empty($params['client_secret'])) {
+        if (!empty($params['client_id']) && !empty($params['client_secret']) && $this->helper->getConfig('validated') != ($params['client_id'] . $params['client_secret'])) {
 
             $client_id = $params['client_id'];
             $client_secret = $params['client_secret'];
@@ -34,9 +35,10 @@ class WebHook extends Validation
                     }, $webHooksList['items']);
                 }
 
-                if (!in_array($this->getWebHookCallbackUrl(), $webHooksUrlsList)) {
-                    $webHook = $this->webHookModel->createWebHook($client_id, $client_secret, $this->getWebHookCallbackUrl());
+                if (!in_array($this->webHookModel->getWebHookCallbackUrl(), $webHooksUrlsList)) {
+                    $webHook = $this->webHookModel->createWebHook($client_id, $client_secret, $this->webHookModel->getWebHookCallbackUrl());
                     if (!empty($webHook)) {
+                        $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                         $response = [
                             'success' => $webHook,
                         ];
@@ -47,6 +49,7 @@ class WebHook extends Validation
                         ];
                     }
                 } else {
+                    $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                     $response = [
                         'success' => true,
                     ];
@@ -57,6 +60,10 @@ class WebHook extends Validation
                     'errorText' => sprintf('Failed to get WebHooks list!'),
                 ];
             }
+        } elseif ($this->helper->getConfig('validated') == ($params['client_id'] . $params['client_secret'])) {
+            $response = [
+                'success' => true,
+            ];
         } else {
             $response = [
                 'success' => false,
@@ -68,14 +75,5 @@ class WebHook extends Validation
         $result = $this->jsonResultFactory->create();
         $result->setData($response);
         return $result;
-    }
-
-
-    /**
-     * @return string
-     */
-    protected function getWebHookCallbackUrl()
-    {
-        return $this->urlBuilder->getUrl('coinpayments/webhooks/notification', ['_direct' => null]);
     }
 }

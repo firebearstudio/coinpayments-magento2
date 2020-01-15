@@ -4,6 +4,7 @@ namespace Coinpayments\CoinPayments\Model;
 
 use Coinpayments\CoinPayments\Api\InvoiceInterface;
 use Magento\Sales\Model\Order;
+use Coinpayments\CoinPayments\Helper\Data;
 
 class Invoice extends AbstractApi implements InvoiceInterface
 {
@@ -14,20 +15,22 @@ class Invoice extends AbstractApi implements InvoiceInterface
      * @param $currencyId
      * @param $invoiceId
      * @param $amount
+     * @param $dispayValue
      * @return mixed
      * @throws \Exception
      */
-    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount)
+    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $dispayValue)
     {
         $requestData = [
             "invoiceId" => $invoiceId,
             "amount" => [
                 "currencyId" => $currencyId,
+                "displayValue" => $dispayValue,
                 "value" => $amount
             ],
         ];
 
-        $action = 'merchant/invoices';
+        $action = Data::API_MERCHANT_INVOICE_ACTION;
 
         $requestParams = [
             'method' => 'POST',
@@ -46,18 +49,20 @@ class Invoice extends AbstractApi implements InvoiceInterface
      * @param int $currencyId
      * @param string $invoiceId
      * @param int $amount
+     * @param string $displayValue
      * @return mixed
      */
-    public function createSimple($clientId, $currencyId = 1, $invoiceId = 'Validate invoice', $amount = 1)
+    public function createSimple($clientId, $currencyId = 5057, $invoiceId = 'Validate invoice', $amount = 1, $displayValue = '0.01')
     {
 
-        $action = 'invoices';
+        $action = Data::API_SIMPLE_INVOICE_ACTION;
 
         $requestParams = [
             'clientId' => $clientId,
             'invoiceId' => $invoiceId,
             'amount' => [
                 'currencyId' => $currencyId,
+                "displayValue" => $displayValue,
                 'value' => $amount
             ]
         ];

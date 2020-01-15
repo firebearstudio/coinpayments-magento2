@@ -2,6 +2,7 @@
 
 namespace Coinpayments\CoinPayments\Controller\Invoice;
 
+use Coinpayments\CoinPayments\Helper\Data;
 use Coinpayments\CoinPayments\Model\Invoice;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\Action;
@@ -36,10 +37,25 @@ class Create extends Action implements CsrfAwareActionInterface
      * @var JsonFactory
      */
     protected $jsonResultFactory;
+    /**
+     * @var Data
+     */
+    private $helper;
 
+    /**
+     * Create constructor.
+     * @param Context $context
+     * @param Invoice $invoice
+     * @param Data $helper
+     * @param Session $checkoutSession
+     * @param ScopeConfigInterface $scopeConfig
+     * @param Url $urlBuilder
+     * @param JsonFactory $jsonResultFactory
+     */
     public function __construct(
         Context $context,
         Invoice $invoice,
+        Data $helper,
         \Magento\Checkout\Model\Session $checkoutSession,
         ScopeConfigInterface $scopeConfig,
         Url $urlBuilder,
@@ -49,6 +65,7 @@ class Create extends Action implements CsrfAwareActionInterface
 
         $this->urlBuilder = $urlBuilder;
         $this->invoiceModel = $invoice;
+        $this->helper = $helper;
         $this->scopeConfig = $scopeConfig;
         $this->checkoutSession = $checkoutSession;
         $this->jsonResultFactory = $jsonResultFactory;
@@ -57,7 +74,6 @@ class Create extends Action implements CsrfAwareActionInterface
 
     public function execute()
     {
-
 
         $response = [
             'successUrl' => $this->urlBuilder->getUrl('checkout/onepage/success'),
@@ -68,7 +84,7 @@ class Create extends Action implements CsrfAwareActionInterface
 
         if ($order->getIncrementId()) {
 
-            $coinInvoiceCacheId = Invoice::INVOICE_CACHE_PREFIX . $order->getIncrementId();
+            $coinInvoiceCacheId = Data::INVOICE_CACHE_PREFIX . $order->getIncrementId();
             $coinInvoiceId = $this->checkoutSession->{'get' . $coinInvoiceCacheId}();
 
             if (empty($coinInvoiceId)) {
@@ -79,14 +95,14 @@ class Create extends Action implements CsrfAwareActionInterface
 
                 if (!empty($coinCurrency)) {
 
-                    $clientId = $this->scopeConfig->getValue('payment/coin_payments/client_id');
-                    $clientSecret = $this->scopeConfig->getValue('payment/coin_payments/client_secret');
-                    $merchantWebHooks = $this->scopeConfig->getValue('payment/coin_payments/webhooks');
+                    $clientId = $this->helper->getConfig(Data::CLIENT_ID_KEY);
+                    $clientSecret = $this->helper->getConfig(Data::CLIENT_SECRET_KEY);
+                    $merchantWebHooks = $this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY);
 
                     if ($merchantWebHooks) {
-                        $invoiceData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $order->getIncrementId(), intval($amount));
+                        $invoiceData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $order->getIncrementId(), intval($amount), $order->getGrandTotal());
                     } else {
-                        $invoiceData = $this->invoiceModel->createSimple($clientId, $coinCurrency['id'], $order->getIncrementId(), intval($amount));
+                        $invoiceData = $this->invoiceModel->createSimple($clientId, $coinCurrency['id'], $order->getIncrementId(), intval($amount), $order->getGrandTotal());
                     }
 
                     if (!empty($invoiceData['id'])) {
@@ -99,30 +115,13 @@ class Create extends Action implements CsrfAwareActionInterface
 
             if (!empty($coinInvoiceId)) {
                 $response['coinInvoiceId'] = $coinInvoiceId;
-                $response['redirectUrl'] = $this->getCoinCheckoutRedirectUrl($coinInvoiceId, $response['successUrl'], $response['cancelUrl']);
+                $response['redirectUrl'] = $this->helper->getCoinCheckoutRedirectUrl($coinInvoiceId, $response['successUrl'], $response['cancelUrl']);
             }
         }
 
         $result = $this->jsonResultFactory->create();
         $result->setData($response);
         return $result;
-    }
-
-    /**
-     * @param $coinInvoiceId
-     * @param $successUrl
-     * @param $cancelUrl
-     * @return string
-     */
-    protected function getCoinCheckoutRedirectUrl($coinInvoiceId, $successUrl, $cancelUrl)
-    {
-        return sprintf(
-            '%s/checkout/?invoice-id=%s&success-url=%s&cancel-url=%s',
-            $this->invoiceModel->getBaseConfig('api_host'),
-            $coinInvoiceId,
-            $successUrl,
-            $cancelUrl
-        );
     }
 
     /**
@@ -133,7 +132,7 @@ class Create extends Action implements CsrfAwareActionInterface
     {
 
         $params = [
-            'types' => Invoice::FIAT_TYPE,
+            'types' => Data::FIAT_TYPE,
             'q' => $name,
         ];
         $items = [];

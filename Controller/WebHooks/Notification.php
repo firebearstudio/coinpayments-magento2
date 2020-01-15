@@ -2,6 +2,7 @@
 
 namespace Coinpayments\CoinPayments\Controller\WebHooks;
 
+use Coinpayments\CoinPayments\Helper\Data;
 use Coinpayments\CoinPayments\Model\WebHook;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Action\Context;
@@ -26,19 +27,21 @@ class Notification extends Action implements CsrfAwareActionInterface
     /* @var ScopeConfigInterface */
     protected $scopeConfig;
     /**
-     * @var JsonFactory
+     * @var Data
      */
-    protected $jsonResultFactory;
+    protected $helper;
 
     public function __construct(
         Context $context,
         WebHook $webHookModel,
+        Data $helper,
         Url $urlBuilder,
         ScopeConfigInterface $scopeConfig
     )
     {
         $this->urlBuilder = $urlBuilder;
         $this->webHookModel = $webHookModel;
+        $this->helper = $helper;
         $this->scopeConfig = $scopeConfig;
         parent::__construct($context);
     }
@@ -47,17 +50,21 @@ class Notification extends Action implements CsrfAwareActionInterface
     public function execute()
     {
 
-        $content = $this->getRequest()->getContent();
-        $signature = $this->getRequest()->getHeaders()->get('X-CoinPayments-Signature')->getFieldValue();
 
-        if ($this->checkDataSignature($signature, $content)) {
-            $requestData = json_decode($content, true);
+        if ($this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY)) {
 
-            if ($requestData['status'] == 'Completed') {
-                $this->webHookModel->completeOrder($requestData);
-            } elseif ($requestData['status'] == 'Expired') {
-                $this->webHookModel->cancelOrder($requestData);
+            $content = $this->getRequest()->getContent();
+            $signature = $this->getRequest()->getHeaders()->get('X-CoinPayments-Signature')->getFieldValue();
+
+            if ($this->checkDataSignature($signature, $content)) {
+                $requestData = json_decode($content, true);
+                if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
+                    $this->webHookModel->completeOrder($requestData);
+                } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_EXPIRED) {
+                    $this->webHookModel->cancelOrder($requestData);
+                }
             }
+
         }
 
     }
@@ -71,8 +78,7 @@ class Notification extends Action implements CsrfAwareActionInterface
     {
 
         $requestUrl = $this->urlBuilder->getCurrentUrl();
-
-        $clientSecret = $this->scopeConfig->getValue('payment/coin_payments/client_secret');
+        $clientSecret = $this->helper->getConfig(Data::CLIENT_SECRET_KEY);
         $encodedPure = $this->webHookModel->generateHmac([$requestUrl, $content], $clientSecret);
         return $signature == $encodedPure;
     }

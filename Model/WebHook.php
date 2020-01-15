@@ -3,6 +3,7 @@
 namespace Coinpayments\CoinPayments\Model;
 
 use Coinpayments\CoinPayments\Api\WebHookInterface;
+use Coinpayments\CoinPayments\Helper\Data;
 use Magento\Sales\Model\Order;
 
 class WebHook extends AbstractApi implements WebHookInterface
@@ -18,7 +19,7 @@ class WebHook extends AbstractApi implements WebHookInterface
     public function createWebHook($clientId, $clientSecret, $webHookCallbackUrl)
     {
 
-        $action = sprintf('merchant/clients/%s/webhooks', $clientId);
+        $action = sprintf(Data::API_WEBHOOK_ACTION, $clientId);
 
         $requestParams = [
             'method' => 'POST',
@@ -51,7 +52,7 @@ class WebHook extends AbstractApi implements WebHookInterface
     public function getList($clientId, $clientSecret)
     {
 
-        $action = sprintf('merchant/clients/%s/webhooks', $clientId);
+        $action = sprintf(Data::API_WEBHOOK_ACTION, $clientId);
         $requestParams = [
             'method' => 'GET',
             'action' => $action,
@@ -91,10 +92,10 @@ class WebHook extends AbstractApi implements WebHookInterface
             $order->setTotalPaid($requestData['invoice']['amount']['displayValue']);
 
             $order
-                ->setState($this->scopeConfig->getValue('payment/coin_payments/status_order_paid'))
-                ->setStatus($this->scopeConfig->getValue('payment/coin_payments/status_order_paid'));
+                ->setState($this->helper->getConfig(Data::CLIENT_ORDER_STATUS_KEY))
+                ->setStatus($this->helper->getConfig(Data::CLIENT_ORDER_STATUS_KEY));
 
-            $str = 'CoinPayments.net Payment Status: <strong>' . $requestData['status'] . '</strong> ' . $requestData['status'] . '<br />';
+            $str = 'CoinPayments.net Payment Status: <strong>' . $requestData['invoice']['status'] . '</strong> ' . $requestData['invoice']['status'] . '<br />';
 
             $str .= 'Transaction ID: ' . $requestData['invoice']['invoiceId'] . '<br />';
             $str .= 'Received Amount: ' . sprintf('%s %s', $requestData['invoice']['amount']['displayValue'], $requestData['invoice']['currency']['symbol']);
@@ -137,6 +138,14 @@ class WebHook extends AbstractApi implements WebHookInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebHookCallbackUrl()
+    {
+        return $this->helper->getWebHookCallbackUrl();
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace Coinpayments\CoinPayments\Controller\Adminhtml\Validation;
 
+use Coinpayments\CoinPayments\Helper\Data;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Url;
@@ -21,11 +22,6 @@ class Validation extends Action
     protected $jsonResultFactory;
 
     /**
-     * @var Url
-     */
-    protected $urlBuilder;
-
-    /**
      * @var WebHook
      */
     protected $webHookModel;
@@ -34,27 +30,32 @@ class Validation extends Action
      * @var Invoice
      */
     protected $invoiceModel;
+    /**
+     * @var Data
+     */
+    protected $helper;
 
     /**
      * Authenticate constructor.
      * @param Context $context
      * @param JsonFactory $jsonResultFactory
-     * @param Url $urlBuilder
      * @param WebHook $webHook
      * @param Invoice $invoice
+     * @param Data $helper
      */
     public function __construct(
         Context $context,
         JsonFactory $jsonResultFactory,
-        Url $urlBuilder,
         WebHook $webHook,
-        Invoice $invoice
+        Invoice $invoice,
+        Data $helper
     )
     {
         parent::__construct($context);
         $this->jsonResultFactory = $jsonResultFactory;
         $this->webHookModel = $webHook;
         $this->invoiceModel = $invoice;
+        $this->helper = $helper;
     }
 
     public function execute()

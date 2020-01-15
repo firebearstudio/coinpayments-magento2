@@ -14,16 +14,12 @@ class CoinPaymentsConfigProvider implements ConfigProviderInterface
      * @var Repository
      */
     protected $_assetRepo;
-    /**
-     * @var string
-     */
-    protected $_methodCode = 'coin_payments';
 
     /**
      * CoinPaymentsConfigProvider constructor.
      * @param Repository $assetRepo
      */
-    public function __construct(Curl $curl, ScopeConfigInterface $scopeConfig, Repository $assetRepo)
+    public function __construct(Repository $assetRepo)
     {
         $this->_assetRepo = $assetRepo;
     }

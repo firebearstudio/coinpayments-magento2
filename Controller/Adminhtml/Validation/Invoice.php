@@ -17,10 +17,11 @@ class Invoice extends Validation
         $params = $this->getRequest()->getParams();
 
         $response = [];
-        if (!empty($params['client_id'])) {
+        if (!empty($params['client_id']) && $this->helper->getConfig('validated') != $params['client_id']) {
             $clientId = $params['client_id'];
             $invoice = $this->invoiceModel->createSimple($clientId);
             if ($invoice) {
+                $this->helper->setConfig('validated', $params['client_id']);
                 $response = [
                     'success' => $invoice
                 ];
@@ -30,12 +31,17 @@ class Invoice extends Validation
                     'errorText' => sprintf('Failed to create validation invoice!'),
                 ];
             }
+        } elseif ($this->helper->getConfig('validated') == $params['client_id']) {
+            $response = [
+                'success' => $params['client_id']
+            ];
         } else {
             $response = [
                 'success' => false,
                 'errorText' => sprintf('Enter Coinpaymnets.NET credentials!'),
             ];
         }
+
 
         $result = $this->jsonResultFactory->create();
         $result->setData($response);

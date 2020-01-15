@@ -113,7 +113,7 @@ define(
                     type: "POST",
                     dataType: 'json',
                     contentType: "application/json",
-                    url: url.build('coinpayments/invoice/create'),
+                    url: url.build(coin_invoice_create_url),
                     success: function (result) {
                         result = JSON.parse(result);
                         console.log(result)

@@ -6,29 +6,19 @@ use Coinpayments\CoinPayments\Model\Methods\Coinpayments;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Sales\Model\Order;
+use Coinpayments\CoinPayments\Helper\Data;
 
 abstract class AbstractApi
 {
 
-    const FIAT_TYPE = 'fiat';
-
-    const INVOICE_CACHE_PREFIX = 'CoinpaymentsInvoice';
-
     /* @var Curl */
     protected $curl;
-
     /* @var ScopeConfigInterface */
     protected $scopeConfig;
-
     /* @var array */
     protected $defaultHeaders = [
         'Content-Type' => 'application/json;'
     ];
-
-    /**
-     * @var mixed
-     */
-    protected $baseConf;
     /**
      * @var Order
      */
@@ -41,9 +31,14 @@ abstract class AbstractApi
      * @var Order\Payment\Transaction\BuilderInterface
      */
     protected $transactionBuilder;
+    /**
+     * @var Data
+     */
+    protected $helper;
 
     public function __construct(
         Curl $curl,
+        Data $helper,
         ScopeConfigInterface $scopeConfig,
         Order $orderModel,
         Coinpayments $coinPaymentsMethod,
@@ -51,11 +46,11 @@ abstract class AbstractApi
     )
     {
         $this->curl = $curl;
+        $this->helper = $helper;
         $this->scopeConfig = $scopeConfig;
         $this->orderModel = $orderModel;
         $this->coinPaymentsMethod = $coinPaymentsMethod;
         $this->transactionBuilder = $transactionBuilder;
-        $this->baseConf = $this->getBaseConfig();
     }
 
     /**
@@ -71,7 +66,7 @@ abstract class AbstractApi
 
         $headerData = [
             'method' => $requestParams['method'],
-            'url' => $this->getApiUrl($requestParams['action']),
+            'url' => $this->helper->getApiUrl($requestParams['action']),
             'clientId' => $requestParams['clientId'],
             'timestamp' => $date->format('c'),
         ];
@@ -104,7 +99,7 @@ abstract class AbstractApi
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, 0);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, 0);
 
-        $requestUrl = $this->getApiUrl($action);
+        $requestUrl = $this->helper->getApiUrl($action);
         $this->curl->post($requestUrl, json_encode($requestData));
         return json_decode($this->curl->getBody(), true);
     }
@@ -126,23 +121,13 @@ abstract class AbstractApi
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, 0);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, 0);
 
-        $requestUrl = $this->getApiUrl($action);
+        $requestUrl = $this->helper->getApiUrl($action);
         if (!empty($requestData)) {
             $requestUrl .= '?' . http_build_query($requestData);
         }
 
         $this->curl->get($requestUrl);
         return json_decode($this->curl->getBody(), true);
-    }
-
-    /**
-     * @param $baseConf
-     * @param $action
-     * @return string
-     */
-    public function getApiUrl($action)
-    {
-        return sprintf('%s/api/v%s/%s', $this->baseConf['api_host'], $this->baseConf['api_version'], $action);
     }
 
     /**
@@ -174,15 +159,6 @@ abstract class AbstractApi
     public function getCurrencies($params = [])
     {
         return $this->sendGetRequest('currencies', [], $params);
-    }
-
-    /**
-     * @param null $field
-     * @return mixed
-     */
-    public function getBaseConfig($field = null)
-    {
-        return $this->getConfig('coinpayment/conf', $field);
     }
 
     /**
