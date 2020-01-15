@@ -13,7 +13,7 @@
         </payment>
         <coinpayment>
             <conf>
-                <api_host>http://192.168.80.205:18003</api_host>
+                <api_host>https://orion-api-testnet.starhermit.com</api_host>
                 <api_version>1</api_version>
             </conf>
         </coinpayment>
