@@ -9,8 +9,6 @@ define(
     ) {
         'use strict';
 
-        console.log('method-renderer/coin-method');
-
         rendererList.push(
             {
                 type: 'coin_payments',

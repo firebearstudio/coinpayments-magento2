@@ -14,56 +14,6 @@
         <!-- ko foreach: getRegion('messages') -->
         <!-- ko template: getTemplate() --><!-- /ko -->
         <!--/ko-->
-        <div class="payment-method-note">
-            <form
-                    class="form"
-                    id="payment_form_coimnpayments"
-                    action="#"
-                    name="pay"
-                    method="post"
-            >
-                <fieldset
-                        data-bind="attr: {class: 'fieldset coinpayments' + getCode(), id: 'payment_fields_' + getCode()}">
-                    <div class="field required" data-bind="attr: {id: getCode() + 'currency_select_exchange'}">
-                        <label data-bind="attr: {for: getCode() + '_currency'}" class="label">
-                            <span><!-- ko i18n: 'Currency'--><!-- /ko --></span>
-                        </label>
-                        <div class="control">
-                            <div class="fields group group-2">
-                                <div class="field no-label">
-                                    <div class="control">
-                                        <select name="payment[coin_currency]"
-                                                class="select"
-                                                id="coin_currency"
-                                                data-bind="
-                            attr: {id: getCode() + '_crypto_currency', 'data-container': getCode() + '_crypto_currency'},
-                            event: { change: getConvertedAmount},
-                            enable: 1,
-                            options: getCurrencies(),
-                            optionsValue: 'value',
-                            optionsText: 'name',
-                            optionsCaption: $t(getCaption())
-                        ">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="field no-label">
-                                    <div class="control">
-                                        <input
-                                                data-bind="value: parseFloat(getBaseGrandTotal()).toFixed(2) + ' ' + getCurrencyCode()"
-                                                class="input-text"
-                                                id="converted_amount_coinpayments"
-                                                type="text"
-                                                disabled
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->

@@ -24,13 +24,4 @@ interface InvoiceInterface
      */
     public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount);
 
-    /**
-     * @return mixed
-     */
-    public function createInvoice();
-
-    /**
-     * @return mixed
-     */
-    public function updateInvoice();
 }

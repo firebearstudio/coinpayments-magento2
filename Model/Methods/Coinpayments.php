@@ -28,14 +28,6 @@ class Coinpayments extends AbstractMethod
      */
     protected $_code = self::CODE;
 
-
-    /* Uncomment if need using blocks
-
-    protected $_formBlockType               = 'Coinpayments\CoinPayments\Block\Form\Coinpayments';
-
-    protected $_infoBlockType               = 'Coinpayments\CoinPayments\Block\Info';*/
-    
-
     /**
      * @param CartInterface|null $quote
      * @return bool

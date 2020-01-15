@@ -31,8 +31,9 @@ define(
         'use strict';
 
         window.fullScreenLoader = fullScreenLoader;
+        window.url = url;
 
-        return Component.extend({
+        var a = Component.extend({
             defaults: {
                 template: 'Coinpayments_CoinPayments/payment/coin_payment'
             },
@@ -43,24 +44,7 @@ define(
                 return 'coin_payments';
             },
             afterPlaceOrder: function () {
-                this.createInvoice(
-                    window.checkoutConfig.payment.coinpayments.currentData.currency,
-                    window.checkoutConfig.payment.coinpayments.currentData.total,
-                    url.build('checkout/onepage/success')
-                );
-            },
-            getCaption: function () {
-                var caption = 'Select Coinpayments.Net currency';
-                if (window.checkoutConfig.payment.coinpayments.currencies.error) {
-                    caption = window.checkoutConfig.payment.coinpayments.currencies.error.name;
-                }
-                return caption;
-            },
-            getCurrencies: function () {
-                if (!window.checkoutConfig.payment.coinpayments.currencies.error) {
-                    return ko.observableArray(window.checkoutConfig.payment.coinpayments.currencies);
-                }
-                return [];
+                this.createInvoice();
             },
             /**
              *
@@ -112,57 +96,6 @@ define(
             getPaymentAcceptanceMarkSrc: function () {
                 return window.checkoutConfig.payment.coinpayments.logo;
             },
-            getCurrencyCode: function () {
-                return window.checkoutConfig.totalsData.quote_currency_code;
-            },
-            /**
-             *
-             * @param element
-             * @param event
-             */
-            getConvertedAmount: function (element, event) {
-                var elemToChange = $('#converted_amount_coinpayments');
-                var coinCurrencyId = $(event.target).find('option:selected').val();
-                var coinCurrencyCode = false;
-                var coinCurrencyPrecision = false;
-
-                window.checkoutConfig.payment.coinpayments.currencies.forEach(function (val, index) {
-                    if (val.body.currencyId == coinCurrencyId) {
-                        coinCurrencyCode = val.body.symbol;
-                        coinCurrencyPrecision = val.body.decimalPlaces;
-                    }
-                })
-
-                if (coinCurrencyId) {
-                    var url = '/rest/V1/coinpayments/currency/set';
-                    var data = {
-                        coinCurrencyId: coinCurrencyId,
-                        coinCurrencyPrecision: coinCurrencyPrecision,
-                    };
-                    $.ajax({
-                        type: "POST",
-                        encoding: 'UTF-8',
-                        url: url,
-                        showLoader: true,
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-                        dataType: 'json',
-                        success: function (result) {
-                            result = JSON.parse(result);
-                            var total = result.converted_amount;
-                            total = total.toFixed(coinCurrencyPrecision);
-                            elemToChange.val(total + ' ' + coinCurrencyCode);
-                            window.checkoutConfig.payment.coinpayments.currentData = {
-                                total: total,
-                                currency: coinCurrencyCode
-                            };
-                        },
-                        error: function (err) {
-                            //TODO error logic
-                        }
-                    });
-                }
-            },
             /**
              * @returns {boolean}
              */
@@ -175,24 +108,20 @@ define(
              * @param value
              * @param redirect
              */
-            createInvoice: function (currency, value, redirect) {
-
-                var url = '/rest/V1/coinpayments/invoice/create';
-
+            createInvoice: function () {
                 $.ajax({
                     type: "POST",
-                    url: url,
+                    dataType: 'json',
                     contentType: "application/json",
+                    url: url.build('coinpayments/invoice/create'),
                     success: function (result) {
-                        var invoiceId = result[0];
-
-                        try {
-                            window.popup = undefined;
-                            showPaymentsPopup(invoiceId, redirect);
-                        } catch (e) {
-                            console.error(e);
+                        result = JSON.parse(result);
+                        console.log(result)
+                        if (result.coinInvoiceId) {
+                            window.location.href = result.redirectUrl;
+                        } else {
+                            window.location.href = result.cancelUrl;
                         }
-
                     },
                     error: function (err) {
                         console.log(error);
@@ -202,74 +131,9 @@ define(
                     }
                 });
             }
-        })
-            ;
+        });
+        window.a = a;
+        return a;
     }
 )
 ;
-
-
-function showPaymentsPopup(invoiceId, redirect) {
-
-    window.fullScreenLoader.startLoader();
-    var apiBaseUrl = "https://orion-api-testnet.starhermit.com";
-    var id = "Checkout_Magento2_" + (Math.random() * 9007199254740991).toString(16);
-    var checkoutAppUrl = apiBaseUrl + "/checkout";
-
-    var popupWidth = 480 + 20;
-    var popupHeight = 620 + 60;
-
-    var popupFeatures = {
-        width: popupWidth,
-        height: popupHeight,
-        status: 1,
-        toolbar: 0,
-        menubar: 0,
-        resizable: 1,
-        scrollbars: 1
-    };
-    var features = Object.keys(popupFeatures)
-        .map(function (key) {
-            return key + "=" + popupFeatures[key];
-        })
-        .join(",");
-
-    window.popup = window.open(checkoutAppUrl, id, features);
-
-    var interval = setInterval(function () {
-        if (!window.popup || window.popup.closed) {
-            clearInterval(interval);
-            window.fullScreenLoader.stopLoader(true);
-            window.popup = undefined;
-            if (redirect) {
-                window.location.replace(redirect);
-            }
-        }
-    }, 1000);
-
-    window.addEventListener("message", function (event) {
-        switch (event.data.action) {
-            case "CoinPaymentsCheckoutAppInitialized":
-                var msg = {
-                    action: "CoinPaymentsCheckoutAppInitializeInvoice",
-                    data: {
-                        apiBaseUrl: apiBaseUrl,
-                        invoiceId: invoiceId
-                    }
-                };
-                window.popup.postMessage(msg, "*");
-                return false;
-            case "CoinPaymentsPaymentButtonModalClosePressed":
-            case "CoinPaymentsCheckoutAppInvoiceCancelled":
-            case "CoinPaymentsCheckoutAppInvoiceConfirmed":
-                window.fullScreenLoader.stopLoader(true);
-                popup.close();
-                if (redirect) {
-                    window.location.replace(redirect);
-                }
-                return false;
-        }
-    }, true);
-
-    window.popup;
-}

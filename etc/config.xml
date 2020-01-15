@@ -13,7 +13,7 @@
         </payment>
         <coinpayment>
             <conf>
-                <api_url>https://orion-api-testnet.starhermit.com/api</api_url>
+                <api_url>https://orion-api-testnet.starhermit.com</api_url>
                 <api_version>1</api_version>
             </conf>
         </coinpayment>

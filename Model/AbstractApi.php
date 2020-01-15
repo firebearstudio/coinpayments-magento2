@@ -2,16 +2,18 @@
 
 namespace Coinpayments\CoinPayments\Model;
 
-use Magento\Checkout\Model\Session;
-use \Magento\Checkout\Model\Cart;
+use Coinpayments\CoinPayments\Model\Methods\Coinpayments;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\HTTP\Client\Curl;
-use Magento\Framework\Url;
+use Magento\Sales\Model\Order;
 
-class ApiProvider
+abstract class AbstractApi
 {
-    /* @var Session */
-    protected $checkoutSession;
+
+    const FIAT_TYPE = 'fiat';
+
+    const INVOICE_CACHE_PREFIX = 'CoinpaymentsInvoice';
+
     /* @var Curl */
     protected $curl;
 
@@ -20,45 +22,48 @@ class ApiProvider
 
     /* @var array */
     protected $defaultHeaders = [
-        'Content-Type' => 'application/json'
+        'Content-Type' => 'application/json;'
     ];
-
-    /* @var Cart */
-    protected $cart;
-
-    /**
-     * @var Url
-     */
-    protected $urlBuilder;
-
-    /**
-     * @var \Magento\Framework\Controller\Result\JsonFactory
-     */
-    protected $jsonResultFactory;
 
     /**
      * @var mixed
      */
     protected $baseConf;
+    /**
+     * @var Order
+     */
+    protected $orderModel;
+    /**
+     * @var Coinpayments
+     */
+    protected $coinPaymentsMethod;
+    /**
+     * @var Order\Payment\Transaction\BuilderInterface
+     */
+    protected $transactionBuilder;
 
     public function __construct(
-        Session $checkoutSession,
-        Cart $cart,
         Curl $curl,
         ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
-        Url $urlBuilder
+        Order $orderModel,
+        Coinpayments $coinPaymentsMethod,
+        Order\Payment\Transaction\BuilderInterface $transactionBuilder
     )
     {
-        $this->cart = $cart;
-        $this->checkoutSession = $checkoutSession;
         $this->curl = $curl;
         $this->scopeConfig = $scopeConfig;
-        $this->urlBuilder = $urlBuilder;
-        $this->jsonResultFactory = $jsonResultFactory;
+        $this->orderModel = $orderModel;
+        $this->coinPaymentsMethod = $coinPaymentsMethod;
+        $this->transactionBuilder = $transactionBuilder;
         $this->baseConf = $this->getBaseConfig();
     }
 
+    /**
+     * @param $requestParams
+     * @param array $requestData
+     * @return array
+     * @throws \Exception
+     */
     public function getRequestHeaders($requestParams, $requestData = [])
     {
 
@@ -78,7 +83,7 @@ class ApiProvider
         return [
             'X-CoinPayments-Client' => $requestParams['clientId'],
             'X-CoinPayments-Timestamp' => $date->format('c'),
-            'X-CoinPayments-Signature' => $this->generateHmac($headerData, $requestParams['clientSecret']),
+            'X-CoinPayments-Signature' => $this->generateHmac($headerData, $requestParams['clientSecret'], true),
         ];
     }
 
@@ -100,7 +105,7 @@ class ApiProvider
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, 0);
 
         $requestUrl = $this->getApiUrl($action);
-        $this->curl->post($requestUrl, $requestData);
+        $this->curl->post($requestUrl, json_encode($requestData));
         return json_decode($this->curl->getBody(), true);
     }
 
@@ -137,17 +142,48 @@ class ApiProvider
      */
     public function getApiUrl($action)
     {
-        return sprintf('%s/v%s/%s', $this->baseConf['api_url'], $this->baseConf['api_version'], $action);
+        return sprintf('%s/api/v%s/%s', 'http://192.168.80.205:18003', $this->baseConf['api_version'], $action);
+//        return sprintf('%s/v%s/%s', $this->baseConf['api_url'], $this->baseConf['api_version'], $action);
     }
 
     /**
      * @param $requestData
      * @param null $secretKey
+     * @param bool $useAdditional
      * @return string
      */
-    public function generateHmac($requestData, $secretKey = null)
+    public function generateHmac($requestData, $secretKey = null, $useAdditional = false)
     {
-        return base64_encode(hash_hmac('sha256', chr(239) . implode('', $requestData), $secretKey, true));
+        if ($useAdditional) {
+            $requestData = array_merge([chr(239), chr(187), chr(191)], $requestData);
+        }
+
+        return base64_encode(
+            hash_hmac(
+                'sha256',
+                implode('', $requestData),
+                $secretKey,
+                true
+            )
+        );
+    }
+
+    /**
+     * @param array $params
+     * @return mixed
+     */
+    public function getCurrencies($params = [])
+    {
+        return $this->sendGetRequest('currencies', [], $params);
+    }
+
+    /**
+     * @param null $field
+     * @return mixed
+     */
+    public function getBaseConfig($field = null)
+    {
+        return $this->getConfig('coinpayment/conf', $field);
     }
 
     /**
@@ -161,14 +197,5 @@ class ApiProvider
             return $this->scopeConfig->getValue($base . DIRECTORY_SEPARATOR . $field);
         }
         return $this->scopeConfig->getValue($base);
-    }
-
-    /**
-     * @param null $field
-     * @return mixed
-     */
-    protected function getBaseConfig($field = null)
-    {
-        return $this->getConfig('coinpayment/conf', $field);
     }
 }

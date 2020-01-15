@@ -15,30 +15,6 @@ class WebHook extends Validation
     public function execute()
     {
 
-//        $clientSecret = 'secret';
-//        $signatureString = "﻿POSTurlid{\"notificationsUrl\":\"notif-url\",\"notifications\":[2,4]}";
-//        $signatureExample = base64_encode(hash_hmac('sha256', $signatureString, $clientSecret, true));
-
-//        $signatureData = [
-//            'POST',
-//            'url',
-//            'id',
-//            json_encode(
-//                json_encode([
-//                    'notificationsUrl' => 'notif-url',
-//                    "notifications" => [
-//                        2,
-//                        4
-//                    ],
-//                ])
-//            )
-//        ];
-//
-//        $equal = sprintf('%s%s%s%s', chr(239), chr(187), chr(191), implode('', $signatureData)) == $signatureString;
-//
-//        $imploded = implode('', $signatureData);
-//        $signature = $this->webHookModel->generateHmac($signatureData, 'secret');
-
         $params = $this->getRequest()->getParams();
         $response = [];
 
@@ -58,8 +34,8 @@ class WebHook extends Validation
                     }, $webHooksList['items']);
                 }
 
-                if (!in_array($this->webHookModel->getWebHookCallbackUrl(), $webHooksUrlsList)) {
-                    $webHook = $this->webHookModel->createWebHook($client_id, $client_secret);
+                if (!in_array($this->getWebHookCallbackUrl(), $webHooksUrlsList)) {
+                    $webHook = $this->webHookModel->createWebHook($client_id, $client_secret, $this->getWebHookCallbackUrl());
                     if (!empty($webHook)) {
                         $response = [
                             'success' => $webHook,
@@ -92,5 +68,15 @@ class WebHook extends Validation
         $result = $this->jsonResultFactory->create();
         $result->setData($response);
         return $result;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getWebHookCallbackUrl()
+    {
+//        return $this->urlBuilder->getUrl('coinpayments/webhooks/notification', ['_direct' => null]);
+        return 'http://34.95.25.102/'; // TODO delete test data
     }
 }
