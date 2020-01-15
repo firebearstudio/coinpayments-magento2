@@ -79,9 +79,9 @@ class Create extends Action implements CsrfAwareActionInterface
 
                 if (!empty($coinCurrency)) {
 
-                    $clientId = $this->scopeConfig->getValue('payment/coin_payments' . DIRECTORY_SEPARATOR . 'client_id');
-                    $clientSecret = $this->scopeConfig->getValue('payment/coin_payments' . DIRECTORY_SEPARATOR . 'client_secret');
-                    $merchantWebHooks = $this->scopeConfig->getValue('payment/coin_payments' . DIRECTORY_SEPARATOR . 'webhooks');
+                    $clientId = $this->scopeConfig->getValue('payment/coin_payments/client_id');
+                    $clientSecret = $this->scopeConfig->getValue('payment/coin_payments/client_secret');
+                    $merchantWebHooks = $this->scopeConfig->getValue('payment/coin_payments/webhooks');
 
                     if ($merchantWebHooks) {
                         $invoiceData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $order->getIncrementId(), intval($amount));
@@ -116,7 +116,13 @@ class Create extends Action implements CsrfAwareActionInterface
      */
     protected function getCoinCheckoutRedirectUrl($coinInvoiceId, $successUrl, $cancelUrl)
     {
-        return sprintf('%s/checkout/?invoice-id=%s&success-url=%s&cancel-url=%s', $this->invoiceModel->getBaseConfig('api_url'), $coinInvoiceId, $successUrl, $cancelUrl);
+        return sprintf(
+            '%s/checkout/?invoice-id=%s&success-url=%s&cancel-url=%s',
+            $this->invoiceModel->getBaseConfig('api_host'),
+            $coinInvoiceId,
+            $successUrl,
+            $cancelUrl
+        );
     }
 
     /**

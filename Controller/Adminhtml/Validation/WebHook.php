@@ -76,7 +76,6 @@ class WebHook extends Validation
      */
     protected function getWebHookCallbackUrl()
     {
-//        return $this->urlBuilder->getUrl('coinpayments/webhooks/notification', ['_direct' => null]);
-        return 'http://34.95.25.102/'; // TODO delete test data
+        return $this->urlBuilder->getUrl('coinpayments/webhooks/notification', ['_direct' => null]);
     }
 }

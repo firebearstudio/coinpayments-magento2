@@ -91,8 +91,8 @@ class WebHook extends AbstractApi implements WebHookInterface
             $order->setTotalPaid($requestData['invoice']['amount']['displayValue']);
 
             $order
-                ->setState($this->scopeConfig->getValue('payment/coin_payments' . DIRECTORY_SEPARATOR . 'status_order_paid'))
-                ->setStatus($this->scopeConfig->getValue('payment/coin_payments' . DIRECTORY_SEPARATOR . 'status_order_paid'));
+                ->setState($this->scopeConfig->getValue('payment/coin_payments/status_order_paid'))
+                ->setStatus($this->scopeConfig->getValue('payment/coin_payments/status_order_paid'));
 
             $str = 'CoinPayments.net Payment Status: <strong>' . $requestData['status'] . '</strong> ' . $requestData['status'] . '<br />';
 

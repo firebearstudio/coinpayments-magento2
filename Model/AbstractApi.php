@@ -142,8 +142,7 @@ abstract class AbstractApi
      */
     public function getApiUrl($action)
     {
-        return sprintf('%s/api/v%s/%s', 'http://192.168.80.205:18003', $this->baseConf['api_version'], $action);
-//        return sprintf('%s/v%s/%s', $this->baseConf['api_url'], $this->baseConf['api_version'], $action);
+        return sprintf('%s/api/v%s/%s', $this->baseConf['api_host'], $this->baseConf['api_version'], $action);
     }
 
     /**

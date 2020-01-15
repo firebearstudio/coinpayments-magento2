@@ -53,10 +53,6 @@ class Notification extends Action implements CsrfAwareActionInterface
         if ($this->checkDataSignature($signature, $content)) {
             $requestData = json_decode($content, true);
 
-            // TODO delete test data
-            $requestData['invoice']['invoiceId'] = '000000019';
-            $requestData['status'] = 'Completed';
-
             if ($requestData['status'] == 'Completed') {
                 $this->webHookModel->completeOrder($requestData);
             } elseif ($requestData['status'] == 'Expired') {
@@ -75,9 +71,8 @@ class Notification extends Action implements CsrfAwareActionInterface
     {
 
         $requestUrl = $this->urlBuilder->getCurrentUrl();
-        $requestUrl = 'http://34.95.25.102/'; // TODO delete test data
 
-        $clientSecret = $this->scopeConfig->getValue('payment/coin_payments' . DIRECTORY_SEPARATOR . 'client_secret');
+        $clientSecret = $this->scopeConfig->getValue('payment/coin_payments/client_secret');
         $encodedPure = $this->webHookModel->generateHmac([$requestUrl, $content], $clientSecret);
         return $signature == $encodedPure;
     }
