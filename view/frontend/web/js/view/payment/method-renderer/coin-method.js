@@ -115,8 +115,6 @@ define(
                     contentType: "application/json",
                     url: url.build(coin_invoice_create_url),
                     success: function (result) {
-                        result = JSON.parse(result);
-                        console.log(result)
                         if (result.coinInvoiceId) {
                             window.location.href = result.redirectUrl;
                         } else {
