@@ -66,87 +66,92 @@ class WebHook extends AbstractApi implements WebHookInterface
     }
 
     /**
-     * @param $requestData
+     * @param Order $order
      * @throws \Exception
      */
-    public function cancelOrder($requestData)
+    public function cancelOrder($order)
     {
-        $order = $this->orderModel->loadByIncrementId($requestData['invoice']['invoiceId']);
-        if ($order->getId()) {
-            $order
-                ->setStatus(Order::STATE_CANCELED)
-                ->setState(Order::STATE_CANCELED)
-                ->save();
-        }
+        $order
+            ->setStatus(Order::STATE_CANCELED)
+            ->setState(Order::STATE_CANCELED)
+            ->save();
     }
 
     /**
-     * @param $order
      * @param $requestData
+     * @throws \Magento\Framework\Exception\InputException
+     */
+    public function receiveNotification($requestData)
+    {
+
+        $orderData = explode('|', $requestData['invoice']['invoiceId']);
+        $orderId = array_shift($orderData);
+        $paymentId = array_shift($orderData);
+
+        $coinInvoiceId = $requestData['invoice']['id'];
+
+        $transaction = $this->transactionRepository->getByTransactionId(
+            $coinInvoiceId,
+            $paymentId,
+            $orderId
+        );
+
+        if (!empty($transaction)) {
+            /** @var Order $order */
+            $order = $transaction->getOrder();
+            if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
+                $this->completeOrder($requestData['invoice'], $order, $transaction);
+            } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_EXPIRED) {
+                $this->cancelOrder($order);
+            }
+        }
+
+    }
+
+    /**
+     * @param $rawDetails
+     * @param Order $order
+     * @param Order\Payment\Transaction $transaction
      * @return bool
      */
-    public function completeOrder($requestData)
+    public function completeOrder($rawDetails, $order, $transaction)
     {
-        $order = $this->orderModel->loadByIncrementId($requestData['invoice']['invoiceId']);
-        if ($order->getId()) {
-            $order->setTotalPaid($requestData['invoice']['amount']['displayValue']);
 
-            $order
-                ->setState($this->helper->getConfig(Data::CLIENT_ORDER_STATUS_KEY))
-                ->setStatus($this->helper->getConfig(Data::CLIENT_ORDER_STATUS_KEY));
-
-            $str = 'CoinPayments.net Payment Status: <strong>' . $requestData['invoice']['status'] . '</strong> ' . $requestData['invoice']['status'] . '<br />';
-
-            $str .= 'Transaction ID: ' . $requestData['invoice']['invoiceId'] . '<br />';
-            $str .= 'Received Amount: ' . sprintf('%s %s', $requestData['invoice']['amount']['displayValue'], $requestData['invoice']['currency']['symbol']);
-
-            $order->addStatusToHistory($order->getStatus(), $str);
+        $rawDetails['amount'] = $rawDetails['amount']['displayValue'];
+        $rawDetails['currency'] = $rawDetails['currency']['symbol'];
 
 
-            try {
-                $payment = $order->getPayment();
-                $payment->setMethod($this->coinPaymentsMethod->getCode());
-                $payment->setLastTransId($requestData['invoice']['invoiceId']);
-                $payment->setTransactionId($requestData['invoice']['invoiceId']);
-                $payment->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array)$requestData]);
+        $order->setTotalPaid($rawDetails['amount']);
+        $order
+            ->setState($this->helper->getConfig(Data::CLIENT_ORDER_STATUS_KEY))
+            ->setStatus($this->helper->getConfig(Data::CLIENT_ORDER_STATUS_KEY));
 
-                $formatedPrice = $order->getBaseCurrency()->formatTxt($order->getGrandTotal());
+        $str = 'CoinPayments.net Payment Status: <strong>' . $rawDetails['status'] . '</strong> ' . $rawDetails['status'] . '<br />';
+        $str .= 'Transaction ID: ' . $rawDetails['id'] . '<br />';
+        $str .= 'Received Amount: ' . sprintf('%s %s', $rawDetails['amount'], $rawDetails['currency']);
+        $order->addStatusToHistory($order->getStatus(), $str);
 
-                /* @var Order\Payment\Transaction\BuilderInterface */
-                $transaction = $this->transactionBuilder
-                    ->setPayment($payment)
-                    ->setOrder($order)
-                    ->setTransactionId($requestData['invoice']['invoiceId'])
-                    ->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => (array)$requestData])
-                    ->setFailSafe(true)
-                    ->build(Order\Payment\Transaction::TYPE_CAPTURE);
 
-                // Add transaction to payment
-                $payment->addTransactionCommentsToOrder($transaction, __('The authorized amount is %1.', $formatedPrice));
-                $payment->setParentTransactionId(null);
+        $transaction->setAdditionalInformation(Order\Payment\Transaction::RAW_DETAILS, $rawDetails);
 
-                // Save payment, transaction and order
-                $payment->save();
-                $order->save();
-                $transaction->save();
-                return $transaction->getTransactionId();
+        try {
+            $formatedPrice = $order->getBaseCurrency()->formatTxt($order->getGrandTotal());
 
-            } catch (\Exception $e) {
+            $payment = $order->getPayment();
+            $payment->setMethod($this->coinPaymentsMethod->getCode());
+            $payment->setLastTransId($transaction->getId());
+            $payment->setTransactionId($transaction->getTransactionId());
+            $payment->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => $rawDetails]);
+            $payment->addTransactionCommentsToOrder($transaction, __('The authorized amount is %1.', $formatedPrice));
+            $payment->setParentTransactionId(null);
 
-            }
-
+            $payment->save();
+            $order->save();
+            $transaction->save();
+            return $transaction->getTransactionId();
+        } catch (\Exception $e) {
         }
-
         return true;
     }
-
-    /**
-     * @return string
-     */
-    public function getWebHookCallbackUrl()
-    {
-        return $this->helper->getWebHookCallbackUrl();
-    }
-
 
 }

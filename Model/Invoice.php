@@ -70,5 +70,17 @@ class Invoice extends AbstractApi implements InvoiceInterface
         return $this->sendPostRequest($action, [], $requestParams);
     }
 
-
+    public function createOrderTransaction($order, $coinInvoiceId)
+    {
+        $payment = $order->getPayment();
+        /* @var Order\Payment\Transaction\BuilderInterface */
+        $transaction = $this->transactionBuilder
+            ->setPayment($payment)
+            ->setOrder($order)
+            ->setTransactionId($coinInvoiceId)
+            ->setFailSafe(true)
+            ->build(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE);
+        $transaction->save();
+        return $transaction->getTransactionId();
+    }
 }

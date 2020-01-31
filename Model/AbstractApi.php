@@ -35,6 +35,10 @@ abstract class AbstractApi
      * @var Data
      */
     protected $helper;
+    /**
+     * @var Order\Payment\Transaction\Repository
+     */
+    protected $transactionRepository;
 
     public function __construct(
         Curl $curl,
@@ -42,7 +46,8 @@ abstract class AbstractApi
         ScopeConfigInterface $scopeConfig,
         Order $orderModel,
         Coinpayments $coinPaymentsMethod,
-        Order\Payment\Transaction\BuilderInterface $transactionBuilder
+        Order\Payment\Transaction\BuilderInterface $transactionBuilder,
+        Order\Payment\Transaction\Repository $transactionRepository
     )
     {
         $this->curl = $curl;
@@ -51,6 +56,8 @@ abstract class AbstractApi
         $this->orderModel = $orderModel;
         $this->coinPaymentsMethod = $coinPaymentsMethod;
         $this->transactionBuilder = $transactionBuilder;
+        $this->transactionRepository = $transactionRepository;
+
     }
 
     /**
@@ -159,18 +166,5 @@ abstract class AbstractApi
     public function getCurrencies($params = [])
     {
         return $this->sendGetRequest('currencies', [], $params);
-    }
-
-    /**
-     * @param $base
-     * @param $field
-     * @return mixed
-     */
-    protected function getConfig($base, $field = false)
-    {
-        if ($field) {
-            return $this->scopeConfig->getValue($base . DIRECTORY_SEPARATOR . $field);
-        }
-        return $this->scopeConfig->getValue($base);
     }
 }

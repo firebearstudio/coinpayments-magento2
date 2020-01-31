@@ -49,22 +49,13 @@ class Notification extends Action implements CsrfAwareActionInterface
 
     public function execute()
     {
-
-
         if ($this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY)) {
-
             $content = $this->getRequest()->getContent();
             $signature = $this->getRequest()->getHeaders()->get('X-CoinPayments-Signature')->getFieldValue();
-
             if ($this->checkDataSignature($signature, $content)) {
                 $requestData = json_decode($content, true);
-                if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
-                    $this->webHookModel->completeOrder($requestData);
-                } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_EXPIRED) {
-                    $this->webHookModel->cancelOrder($requestData);
-                }
+                $this->webHookModel->receiveNotification($requestData);
             }
-
         }
 
     }
