@@ -15,17 +15,17 @@ class Invoice extends AbstractApi implements InvoiceInterface
      * @param $currencyId
      * @param $invoiceId
      * @param $amount
-     * @param $dispayValue
+     * @param $displayValue
      * @return mixed
      * @throws \Exception
      */
-    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $dispayValue)
+    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $displayValue)
     {
         $requestData = [
             "invoiceId" => $invoiceId,
             "amount" => [
                 "currencyId" => $currencyId,
-                "displayValue" => $dispayValue,
+                "displayValue" => $displayValue,
                 "value" => $amount
             ],
         ];
