@@ -21,10 +21,10 @@ class WebHook extends Validation
 
         if (!empty($params['client_id']) && !empty($params['client_secret']) && $this->helper->getConfig('validated') != ($params['client_id'] . $params['client_secret'])) {
 
-            $client_id = $params['client_id'];
-            $client_secret = $params['client_secret'];
+            $clientId = $params['client_id'];
+            $clientSecret = $params['client_secret'];
 
-            $webHooksList = $this->webHookModel->getList($client_id, $client_secret);
+            $webHooksList = $this->webHookModel->getList($clientId, $clientSecret);
 
             if (!empty($webHooksList)) {
 
@@ -36,7 +36,7 @@ class WebHook extends Validation
                 }
 
                 if (!in_array($this->helper->getWebHookCallbackUrl(), $webHooksUrlsList)) {
-                    $webHook = $this->webHookModel->createWebHook($client_id, $client_secret, $this->helper->getWebHookCallbackUrl());
+                    $webHook = $this->webHookModel->createWebHook($clientId, $clientSecret, $this->helper->getWebHookCallbackUrl());
                     if (!empty($webHook)) {
                         $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                         $response = [
