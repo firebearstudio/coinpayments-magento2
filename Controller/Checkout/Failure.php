@@ -24,6 +24,13 @@ class Failure extends Action
      */
     protected $resultPageFactory;
 
+    /**
+     * Failure constructor.
+     * @param Session $checkoutSession
+     * @param OrderRepository $orderRepository
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     */
     public function __construct(
         Session $checkoutSession,
         OrderRepository $orderRepository,

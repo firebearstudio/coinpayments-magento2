@@ -2,9 +2,6 @@
 
 namespace Coinpayments\CoinPayments\Controller\Adminhtml\Validation;
 
-use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
-
 /**
  * Class Invoice
  * @package Coinpayments\CoinPayments\Controller\Adminhtml\Validation

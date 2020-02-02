@@ -6,15 +6,13 @@
 
 namespace Coinpayments\CoinPayments\Model\Methods;
 
-use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Framework\HTTP\ZendClientFactory;
-use Magento\Payment\Model\Method\ConfigInterface;
-use Magento\Payment\Model\Method\TransparentInterface;
-use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
-use Magento\Sales\Model\Order;
 
+/**
+ * Class Coinpayments
+ * @package Coinpayments\CoinPayments\Model\Methods
+ */
 class Coinpayments extends AbstractMethod
 {
 
@@ -32,7 +30,7 @@ class Coinpayments extends AbstractMethod
      * @param CartInterface|null $quote
      * @return bool
      */
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(CartInterface $quote = null)
     {
         return parent::isAvailable($quote);
     }
@@ -46,6 +44,9 @@ class Coinpayments extends AbstractMethod
         return (bool)(int)$this->getConfigData('active', $storeId);
     }
 
+    /**
+     * @return string
+     */
     public function getCode()
     {
         return $this->_code;

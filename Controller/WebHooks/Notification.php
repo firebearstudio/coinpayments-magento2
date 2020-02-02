@@ -49,7 +49,7 @@ class Notification extends Action implements CsrfAwareActionInterface
 
     public function execute()
     {
-        if ($this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY)) {
+        if (!empty($this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY)) && !empty($this->getRequest()->getHeaders()->get('X-CoinPayments-Signature'))) {
             $content = $this->getRequest()->getContent();
             $signature = $this->getRequest()->getHeaders()->get('X-CoinPayments-Signature')->getFieldValue();
             if ($this->checkDataSignature($signature, $content)) {

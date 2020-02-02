@@ -3,11 +3,17 @@
 namespace Coinpayments\CoinPayments\Model;
 
 use Coinpayments\CoinPayments\Model\Methods\Coinpayments;
+use Coinpayments\CoinPayments\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Sales\Model\Order;
-use Coinpayments\CoinPayments\Helper\Data;
+use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
+use Magento\Sales\Model\Order\Payment\Transaction\Repository;
 
+/**
+ * Class AbstractApi
+ * @package Coinpayments\CoinPayments\Model
+ */
 abstract class AbstractApi
 {
 
@@ -28,7 +34,7 @@ abstract class AbstractApi
      */
     protected $coinPaymentsMethod;
     /**
-     * @var Order\Payment\Transaction\BuilderInterface
+     * @var BuilderInterface
      */
     protected $transactionBuilder;
     /**
@@ -36,18 +42,28 @@ abstract class AbstractApi
      */
     protected $helper;
     /**
-     * @var Order\Payment\Transaction\Repository
+     * @var Repository
      */
     protected $transactionRepository;
 
+    /**
+     * AbstractApi constructor.
+     * @param Curl $curl
+     * @param Data $helper
+     * @param ScopeConfigInterface $scopeConfig
+     * @param Order $orderModel
+     * @param Coinpayments $coinPaymentsMethod
+     * @param BuilderInterface $transactionBuilder
+     * @param Repository $transactionRepository
+     */
     public function __construct(
         Curl $curl,
         Data $helper,
         ScopeConfigInterface $scopeConfig,
         Order $orderModel,
         Coinpayments $coinPaymentsMethod,
-        Order\Payment\Transaction\BuilderInterface $transactionBuilder,
-        Order\Payment\Transaction\Repository $transactionRepository
+        BuilderInterface $transactionBuilder,
+        Repository $transactionRepository
     )
     {
         $this->curl = $curl;

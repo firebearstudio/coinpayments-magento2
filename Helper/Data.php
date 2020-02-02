@@ -2,12 +2,15 @@
 
 namespace Coinpayments\CoinPayments\Helper;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Store\Model\ScopeInterface;
 use Magento\Config\Model\ResourceModel\Config;
+use Magento\Framework\App\Config\ConfigResource\ConfigInterface;
 
+/**
+ * Class Data
+ * @package Coinpayments\CoinPayments\Helper
+ */
 class Data extends AbstractHelper
 {
 
@@ -48,7 +51,7 @@ class Data extends AbstractHelper
      * @param Config $resourceConfig
      */
     public function __construct(Context $context,
-                                \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resourceConfig)
+                                ConfigInterface $resourceConfig)
     {
         parent::__construct($context);
         $this->resourceConfig = $resourceConfig;

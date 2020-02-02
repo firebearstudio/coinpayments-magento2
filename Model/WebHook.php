@@ -6,6 +6,10 @@ use Coinpayments\CoinPayments\Api\WebHookInterface;
 use Coinpayments\CoinPayments\Helper\Data;
 use Magento\Sales\Model\Order;
 
+/**
+ * Class WebHook
+ * @package Coinpayments\CoinPayments\Model
+ */
 class WebHook extends AbstractApi implements WebHookInterface
 {
 
@@ -53,6 +57,7 @@ class WebHook extends AbstractApi implements WebHookInterface
     {
 
         $action = sprintf(Data::API_WEBHOOK_ACTION, $clientId);
+
         $requestParams = [
             'method' => 'GET',
             'action' => $action,
@@ -61,20 +66,7 @@ class WebHook extends AbstractApi implements WebHookInterface
         ];
 
         $headers = $this->getRequestHeaders($requestParams);
-
         return $this->sendGetRequest($action, $headers);
-    }
-
-    /**
-     * @param Order $order
-     * @throws \Exception
-     */
-    public function cancelOrder($order)
-    {
-        $order
-            ->setStatus(Order::STATE_CANCELED)
-            ->setState(Order::STATE_CANCELED)
-            ->save();
     }
 
     /**
@@ -110,8 +102,8 @@ class WebHook extends AbstractApi implements WebHookInterface
 
     /**
      * @param $rawDetails
-     * @param Order $order
-     * @param Order\Payment\Transaction $transaction
+     * @param $order
+     * @param $transaction
      * @return bool
      */
     public function completeOrder($rawDetails, $order, $transaction)
@@ -152,6 +144,18 @@ class WebHook extends AbstractApi implements WebHookInterface
         } catch (\Exception $e) {
         }
         return true;
+    }
+
+    /**
+     * @param Order $order
+     * @throws \Exception
+     */
+    public function cancelOrder($order)
+    {
+        $order
+            ->setStatus(Order::STATE_CANCELED)
+            ->setState(Order::STATE_CANCELED)
+            ->save();
     }
 
 }

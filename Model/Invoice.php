@@ -3,9 +3,13 @@
 namespace Coinpayments\CoinPayments\Model;
 
 use Coinpayments\CoinPayments\Api\InvoiceInterface;
-use Magento\Sales\Model\Order;
 use Coinpayments\CoinPayments\Helper\Data;
+use Magento\Sales\Model\Order;
 
+/**
+ * Class Invoice
+ * @package Coinpayments\CoinPayments\Model
+ */
 class Invoice extends AbstractApi implements InvoiceInterface
 {
 
@@ -21,14 +25,6 @@ class Invoice extends AbstractApi implements InvoiceInterface
      */
     public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $displayValue)
     {
-        $requestData = [
-            "invoiceId" => $invoiceId,
-            "amount" => [
-                "currencyId" => $currencyId,
-                "displayValue" => $displayValue,
-                "value" => $amount
-            ],
-        ];
 
         $action = Data::API_MERCHANT_INVOICE_ACTION;
 
@@ -39,8 +35,16 @@ class Invoice extends AbstractApi implements InvoiceInterface
             'clientSecret' => $clientSecret,
         ];
 
-        $headers = $this->getRequestHeaders($requestParams, $requestData);
+        $requestData = [
+            "invoiceId" => $invoiceId,
+            "amount" => [
+                "currencyId" => $currencyId,
+                "displayValue" => $displayValue,
+                "value" => $amount
+            ],
+        ];
 
+        $headers = $this->getRequestHeaders($requestParams, $requestData);
         return $this->sendPostRequest($action, $headers, $requestData);
     }
 
@@ -70,6 +74,11 @@ class Invoice extends AbstractApi implements InvoiceInterface
         return $this->sendPostRequest($action, [], $requestParams);
     }
 
+    /**
+     * @param $order
+     * @param $coinInvoiceId
+     * @return int
+     */
     public function createOrderTransaction($order, $coinInvoiceId)
     {
         $payment = $order->getPayment();

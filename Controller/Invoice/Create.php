@@ -40,11 +40,7 @@ class Create extends Action implements CsrfAwareActionInterface
     /**
      * @var Data
      */
-    private $helper;
-    /**
-     * @var Order\Payment\Transaction\BuilderInterface
-     */
-    protected $transactionBuilder;
+    protected $helper;
 
     /**
      * Create constructor.
@@ -60,7 +56,7 @@ class Create extends Action implements CsrfAwareActionInterface
         Context $context,
         Invoice $invoice,
         Data $helper,
-        \Magento\Checkout\Model\Session $checkoutSession,
+        Session $checkoutSession,
         ScopeConfigInterface $scopeConfig,
         Url $urlBuilder,
         JsonFactory $jsonResultFactory
@@ -102,7 +98,7 @@ class Create extends Action implements CsrfAwareActionInterface
                     $clientId = $this->helper->getConfig(Data::CLIENT_ID_KEY);
                     $clientSecret = $this->helper->getConfig(Data::CLIENT_SECRET_KEY);
                     $merchantWebHooks = $this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY);
-                    $invoiceId = sprintf('%s|%s',$order->getIncrementId(), $order->getPayment()->getId());
+                    $invoiceId = sprintf('%s|%s', $order->getId(), $order->getPayment()->getId());
 
                     if ($merchantWebHooks) {
                         $invoiceData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $invoiceId, intval($amount), $order->getGrandTotal());

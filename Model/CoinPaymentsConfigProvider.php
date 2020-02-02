@@ -3,11 +3,12 @@
 namespace Coinpayments\CoinPayments\Model;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
-use Magento\Framework\HTTP\Client\Curl;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\View\Asset\Repository;
 
-
+/**
+ * Class CoinPaymentsConfigProvider
+ * @package Coinpayments\CoinPayments\Model
+ */
 class CoinPaymentsConfigProvider implements ConfigProviderInterface
 {
     /**
