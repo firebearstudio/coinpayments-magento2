@@ -1,11 +1,20 @@
-#install
+# Coinpayments_CoinPayments Module
 
-Clone source to "app/code/Coinpayments/CoinPayments" directory.
+The Coinpayments_CoinPayments module provides the "Coinpayments.NET" payment method.
 
-To enable module run: "bin/magento module:enable Coinpayments_CoinPayments"
+## About CoinPayments Module
 
-In admin backend on STORES > Configuration > SALES > Payment Methods page enter clientId to send invoices and enable webHooks and enter clientSecret to receive webHook notification. 
+CoinPayments module provides integration of your Magento 2 store with Coinpaymnets.NET services. This helps your customers shop quickly, safely and securely. 
+Your customers can pay on your website without re-entering their payment and address details. 
+All CoinPayments module transactions are protected.
 
-On your first saving of configurations you create validating invoice with $ 0.01 cost, or creating webHook notification, if enabled.
+## Dependencies
 
-On /checkout/#payment page after placing orders you'll gonna be redirected to coin checkout page.
+You can find a list of modules in the require section of the `composer.json` file located in the
+same directory as this `README.md` file.
+
+## Extension Points
+
+There are no extension points or service contracts for this module.
+
+## Additional Information
