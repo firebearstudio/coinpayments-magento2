@@ -13,7 +13,7 @@ use Coinpayments\CoinPayments\Model\Invoice;
  * Class Validation
  * @package Coinpayments\CoinPayments\Controller\Adminhtml\Validation
  */
-class Validation extends Action
+abstract class Validation extends Action
 {
     /**
      * @var JsonFactory
@@ -57,8 +57,5 @@ class Validation extends Action
         $this->helper = $helper;
     }
 
-    public function execute()
-    {
-
-    }
+    abstract public function execute();
 }
