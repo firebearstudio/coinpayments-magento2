@@ -19,52 +19,54 @@ class WebHook extends Validation
         $params = $this->getRequest()->getParams();
         $response = [];
 
-        if (!empty($params['client_id']) && !empty($params['client_secret']) && $this->helper->getConfig('validated') != ($params['client_id'] . $params['client_secret'])) {
+        if (!empty($params['client_id']) && !empty($params['client_secret'])) {
+            if ($this->helper->getConfig('validated') != ($params['client_id'] . $params['client_secret'])) {
 
-            $clientId = $params['client_id'];
-            $clientSecret = $params['client_secret'];
+                $clientId = $params['client_id'];
+                $clientSecret = $params['client_secret'];
 
-            $webHooksList = $this->webHookModel->getList($clientId, $clientSecret);
+                $webHooksList = $this->webHookModel->getList($clientId, $clientSecret);
 
-            if (!empty($webHooksList)) {
+                if (!empty($webHooksList)) {
 
-                $webHooksUrlsList = [];
-                if (!empty($webHooksList['items'])) {
-                    $webHooksUrlsList = array_map(function ($webHook) {
-                        return $webHook['notificationsUrl'];
-                    }, $webHooksList['items']);
-                }
+                    $webHooksUrlsList = [];
+                    if (!empty($webHooksList['items'])) {
+                        $webHooksUrlsList = array_map(function ($webHook) {
+                            return $webHook['notificationsUrl'];
+                        }, $webHooksList['items']);
+                    }
 
-                if (!in_array($this->helper->getWebHookCallbackUrl(), $webHooksUrlsList)) {
-                    $webHook = $this->webHookModel->createWebHook($clientId, $clientSecret, $this->helper->getWebHookCallbackUrl());
-                    if (!empty($webHook)) {
+                    if (!in_array($this->helper->getWebHookCallbackUrl(), $webHooksUrlsList)) {
+                        $webHook = $this->webHookModel->createWebHook($clientId, $clientSecret, $this->helper->getWebHookCallbackUrl());
+                        if (!empty($webHook)) {
+                            $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
+                            $response = [
+                                'success' => $webHook,
+                            ];
+                        } else {
+                            $response = [
+                                'success' => false,
+                                'errorText' => sprintf('Failed to create WebHook!'),
+                            ];
+                        }
+                    } else {
                         $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                         $response = [
-                            'success' => $webHook,
-                        ];
-                    } else {
-                        $response = [
-                            'success' => false,
-                            'errorText' => sprintf('Failed to create WebHook!'),
+                            'success' => true,
                         ];
                     }
                 } else {
-                    $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                     $response = [
-                        'success' => true,
+                        'success' => false,
+                        'errorText' => sprintf('Failed to get WebHooks list!'),
                     ];
                 }
             } else {
                 $response = [
-                    'success' => false,
-                    'errorText' => sprintf('Failed to get WebHooks list!'),
+                    'success' => true,
                 ];
             }
-        } elseif ($this->helper->getConfig('validated') == ($params['client_id'] . $params['client_secret'])) {
-            $response = [
-                'success' => true,
-            ];
-        } else {
+        }else {
             $response = [
                 'success' => false,
                 'errorText' => sprintf('Enter Coinpayments.NET credentials!'),
