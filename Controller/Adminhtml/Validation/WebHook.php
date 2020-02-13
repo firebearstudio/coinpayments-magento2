@@ -36,8 +36,8 @@ class WebHook extends Validation
                         }, $webHooksList['items']);
                     }
 
-                    if (!in_array($this->helper->getWebHookCallbackUrl(), $webHooksUrlsList)) {
-                        $webHook = $this->webHookModel->createWebHook($clientId, $clientSecret, $this->helper->getWebHookCallbackUrl());
+                    if (!in_array($this->helper->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL), $webHooksUrlsList)) {
+                        $webHook = $this->webHookModel->createWebHook($clientId, $clientSecret, $this->helper->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL));
                         if (!empty($webHook)) {
                             $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                             $response = [

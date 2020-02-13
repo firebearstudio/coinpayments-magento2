@@ -44,6 +44,7 @@ class Invoice extends AbstractApi implements InvoiceInterface
             ],
         ];
 
+        $requestData = $this->appendInvoiceMetadata($requestData);
         $headers = $this->getRequestHeaders($requestParams, $requestData);
         return $this->sendPostRequest($action, $headers, $requestData);
     }
@@ -61,17 +62,18 @@ class Invoice extends AbstractApi implements InvoiceInterface
 
         $action = Data::API_SIMPLE_INVOICE_ACTION;
 
-        $requestParams = [
+        $requestData = [
             'clientId' => $clientId,
             'invoiceId' => $invoiceId,
             'amount' => [
                 'currencyId' => $currencyId,
                 "displayValue" => $displayValue,
                 'value' => $amount
-            ]
+            ],
         ];
 
-        return $this->sendPostRequest($action, [], $requestParams);
+        $requestData = $this->appendInvoiceMetadata($requestData);
+        return $this->sendPostRequest($action, [], $requestData);
     }
 
     /**
@@ -91,5 +93,16 @@ class Invoice extends AbstractApi implements InvoiceInterface
             ->build(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE);
         $transaction->save();
         return $transaction->getTransactionId();
+    }
+
+    protected function appendInvoiceMetadata($requestData)
+    {
+
+        $requestData['metadata'] = [
+            "integration" => sprintf("Magento_v%s", $this->helper->getBaseConfigParam(Data::PACKAGE_VERSION)),
+            "hostname" => $this->helper->getHostUrl(),
+        ];
+
+        return $requestData;
     }
 }

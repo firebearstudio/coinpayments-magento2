@@ -24,6 +24,7 @@ class Data extends AbstractHelper
     const CLIENT_SECRET_KEY = 'client_secret';
     const CLIENT_WEBHOOKS_KEY = 'webhooks';
     const CLIENT_ORDER_STATUS_KEY = 'status_order_paid';
+    const PACKAGE_VERSION = 'package_version';
 
     const API_WEBHOOK_ACTION = 'merchant/clients/%s/webhooks';
     const API_SIMPLE_INVOICE_ACTION = 'invoices';
@@ -95,11 +96,25 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @param $param
+     * @return mixed
+     */
+    public function getBaseConfigParam($param)
+    {
+        $value = null;
+        if (isset($this->baseConf[$param])) {
+            $value = $this->baseConf[$param];
+        }
+        return $value;
+    }
+
+    /**
+     * @param string $route
      * @return string
      */
-    public function getWebHookCallbackUrl()
+    public function getHostUrl($route = '')
     {
-        return $this->_getUrl(Data::WEBHOOK_NOTIFICATION_URL, ['_direct' => null]);
+        return $this->_getUrl($route, ['_direct' => null]);
     }
 
     /**
