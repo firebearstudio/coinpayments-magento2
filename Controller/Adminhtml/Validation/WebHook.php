@@ -66,7 +66,7 @@ class WebHook extends Validation
                     'success' => true,
                 ];
             }
-        }else {
+        } else {
             $response = [
                 'success' => false,
                 'errorText' => sprintf('Enter Coinpayments.NET credentials!'),

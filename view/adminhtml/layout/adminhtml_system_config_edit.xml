@@ -8,7 +8,8 @@
     </head>
     <body>
         <referenceContainer name="js">
-            <block class="Magento\Backend\Block\Template" template="Coinpayments_CoinPayments::js_vars.phtml" name="custom_js_backend"/>
+            <block class="Magento\Backend\Block\Template" template="Coinpayments_CoinPayments::js_vars.phtml"
+                   name="custom_js_backend"/>
         </referenceContainer>
     </body>
 </page>
