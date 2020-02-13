@@ -36,10 +36,10 @@ class WebHook extends AbstractApi implements WebHookInterface
             "notificationsUrl" => $webHookCallbackUrl,
             "notifications" => [
                 "invoiceCreated",
-                "invoicePaymentsReceived",
-                "invoicePaymentsConfirmed",
+                "invoicePending",
+                "invoicePaid",
                 "invoiceCompleted",
-                "invoiceExpired",
+                "invoiceCancelled",
             ],
         ];
 
@@ -93,7 +93,7 @@ class WebHook extends AbstractApi implements WebHookInterface
             $order = $transaction->getOrder();
             if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
                 $this->completeOrder($requestData['invoice'], $order, $transaction);
-            } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_EXPIRED) {
+            } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_CANCELLED) {
                 $this->cancelOrder($order);
             }
         }

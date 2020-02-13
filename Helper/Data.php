@@ -36,7 +36,7 @@ class Data extends AbstractHelper
     const WEBHOOK_NOTIFICATION_URL = 'coinpayments/webhooks/notification';
 
     const API_INVOICE_COMPLETED = 'Completed';
-    const API_INVOICE_EXPIRED = 'Cancelled';
+    const API_INVOICE_CANCELLED = 'Cancelled';
 
     /**
      * @var Config
