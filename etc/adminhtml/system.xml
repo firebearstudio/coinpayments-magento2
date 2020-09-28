@@ -25,7 +25,7 @@
                 </field>
                 <field id="client_id" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0"
                        showInStore="0">
-                    <label>Your CoinPayments.net Client ID</label>
+                    <label>Client ID</label>
                     <validate>
                         required-entry validate-length minimum-length-22 maximum-length-32 coin-invoice-validate
                     </validate>
@@ -45,7 +45,7 @@
 
                 <field id="client_secret" translate="label" type="text" sortOrder="4" showInDefault="1"
                        showInWebsite="0" showInStore="0">
-                    <label>Your CoinPayments.net Client Secret</label>
+                    <label>Client Secret</label>
                     <validate>
                         required-entry validate-length minimum-length-22 maximum-length-44 coin-webhooks-validate
                     </validate>
