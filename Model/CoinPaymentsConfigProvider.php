@@ -60,7 +60,7 @@ class CoinPaymentsConfigProvider implements ConfigProviderInterface
             'version' => 1,
             'cmd' => 'rates',
             'key' => $publicKey,
-            'accepted' => 1,
+            'accepted' => 2,
         ];
 
         $this->_curl->addHeader('HMAC', hash_hmac('sha512', http_build_query($data), $secretKey));
@@ -69,6 +69,7 @@ class CoinPaymentsConfigProvider implements ConfigProviderInterface
         $response = json_decode($this->_curl->getBody());
 
         $currencies = ['error' => $response->error];
+        $acceptedCurrencies = ['error' => $response->error];
         if ($response->error == 'ok') {
             $currencies = [];
             $acceptedCurrencies = [];
