@@ -98,7 +98,7 @@ class Create extends Action implements CsrfAwareActionInterface
                     $clientId = $this->helper->getConfig(Data::CLIENT_ID_KEY);
                     $clientSecret = $this->helper->getConfig(Data::CLIENT_SECRET_KEY);
                     $merchantWebHooks = $this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY);
-                    $invoiceId = sprintf('%s|%s', $order->getId(), $order->getPayment()->getId());
+                    $invoiceId = sprintf('%s|%s|%s', md5($this->helper->getHostUrl()), $order->getId(), $order->getPayment()->getId());
 
                     if ($merchantWebHooks) {
                         $invoicesData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $invoiceId, intval($amount), $order->getGrandTotal());

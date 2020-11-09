@@ -77,24 +77,25 @@ class WebHook extends AbstractApi implements WebHookInterface
     {
 
         $orderData = explode('|', $requestData['invoice']['invoiceId']);
-        $orderId = array_shift($orderData);
-        $paymentId = array_shift($orderData);
+        $host = array_shift($orderData);
+        if ($host == md5($this->helper->getHostUrl())) {
+            $orderId = array_shift($orderData);
+            $paymentId = array_shift($orderData);
+            $coinInvoiceId = $requestData['invoice']['id'];
+            $transaction = $this->transactionRepository->getByTransactionId(
+                $coinInvoiceId,
+                $paymentId,
+                $orderId
+            );
 
-        $coinInvoiceId = $requestData['invoice']['id'];
-
-        $transaction = $this->transactionRepository->getByTransactionId(
-            $coinInvoiceId,
-            $paymentId,
-            $orderId
-        );
-
-        if (!empty($transaction)) {
-            /** @var Order $order */
-            $order = $transaction->getOrder();
-            if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
-                $this->completeOrder($requestData['invoice'], $order, $transaction);
-            } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_CANCELLED) {
-                $this->cancelOrder($order);
+            if (!empty($transaction)) {
+                /** @var Order $order */
+                $order = $transaction->getOrder();
+                if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
+                    $this->completeOrder($requestData['invoice'], $order, $transaction);
+                } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_CANCELLED) {
+                    $this->cancelOrder($order);
+                }
             }
         }
 
