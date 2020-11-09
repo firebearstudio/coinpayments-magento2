@@ -14,6 +14,7 @@
         <coinpayment>
             <conf>
                 <api_host>https://api.coinpayments.net</api_host>
+                <checkout_host>https://checkout.coinpayments.net</checkout_host>
                 <api_version>1</api_version>
                 <package_version>2.0.0</package_version>
             </conf>

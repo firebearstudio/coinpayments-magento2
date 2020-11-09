@@ -127,7 +127,7 @@ class Data extends AbstractHelper
     {
         return sprintf(
             '%s/checkout/?invoice-id=%s&success-url=%s&cancel-url=%s',
-            $this->baseConf['api_host'],
+            $this->baseConf['checkout_host'],
             $coinInvoiceId,
             $successUrl,
             $cancelUrl
