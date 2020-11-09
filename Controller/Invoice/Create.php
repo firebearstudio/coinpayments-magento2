@@ -102,7 +102,7 @@ class Create extends Action implements CsrfAwareActionInterface
 
                     if ($merchantWebHooks) {
                         $invoicesData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $invoiceId, intval($amount), $order->getGrandTotal());
-                        $invoiceData = array_shift($invoicesData);
+                        $invoiceData = array_shift($invoicesData['invoices']);
                     } else {
                         $invoiceData = $this->invoiceModel->createSimple($clientId, $coinCurrency['id'], $invoiceId, intval($amount), $order->getGrandTotal());
                     }
