@@ -1,0 +1,7 @@
+<script>
+    require([
+        'prototype'
+    ], function ($) {
+        window.coin_invoice_create_url = '<?= /** @noEscape */ $block->getUrl(\Coinpayments\CoinPayments\Helper\Data::CREATE_INVOICE_URL);?>';
+    });
+</script>

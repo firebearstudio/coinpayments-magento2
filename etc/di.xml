@@ -1,25 +1,6 @@
 <?xml version="1.0"?>
-<!--
-/**
- * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
- * @author   : Firebear Studio <fbeardev@gmail.com>
- */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
-    <type name="Coinpayments\CoinPayments\Logger\Handler">
-        <arguments>
-            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
-        </arguments>
-    </type>
-    <type name="Coinpayments\CoinPayments\Logger\Logger">
-        <arguments>
-            <argument name="name" xsi:type="string">CoinPaymentDebug</argument>
-            <argument name="handlers"  xsi:type="array">
-                <item name="system" xsi:type="object">Coinpayments\CoinPayments\Logger\Handler</item>
-            </argument>
-        </arguments>
-    </type>
-    <preference for="Coinpayments\CoinPayments\Api\CurrencyManagementInterface" type="Coinpayments\CoinPayments\Model\Currency"/>
-    <preference for="Coinpayments\CoinPayments\Api\TransactionInterface" type="Coinpayments\CoinPayments\Model\Transaction"/>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <preference for="Coinpayments\CoinPayments\Api\InvoiceInterface"
+                type="Coinpayments\CoinPayments\Model\Api\Invoice"/>
 </config>

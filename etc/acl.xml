@@ -4,7 +4,6 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin"/>
-            <resource id="Coinpayments_CoinPayments::currency" title="Human readable title"/>
         </resources>
     </acl>
 </config>
