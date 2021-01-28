@@ -36,12 +36,20 @@ class WebHook extends Validation
                         }, $webHooksList['items']);
                     }
 
-                    if (!in_array($this->helper->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL), $webHooksUrlsList)) {
-                        $webHook = $this->webHookModel->createWebHook($clientId, $clientSecret, $this->helper->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL));
-                        if (!empty($webHook)) {
+                    if (
+                        !in_array($this->helper->getNotificationUrl($clientId, DATA::PAID_EVENT), $webHooksUrlsList) ||
+                        !in_array($this->helper->getNotificationUrl($clientId, DATA::PENDING_EVENT), $webHooksUrlsList) ||
+                        !in_array($this->helper->getNotificationUrl($clientId, DATA::CANCELLED_EVENT), $webHooksUrlsList)
+                    ) {
+                        if (
+                            !empty($this->webHookModel->createWebHook($clientId, $clientSecret, DATA::PAID_EVENT)) &&
+                            !empty($this->webHookModel->createWebHook($clientId, $clientSecret, DATA::PENDING_EVENT)) &&
+                            !empty($this->webHookModel->createWebHook($clientId, $clientSecret, DATA::CANCELLED_EVENT))
+
+                        ) {
                             $this->helper->setConfig('validated', $params['client_id'] . $params['client_secret']);
                             $response = [
-                                'success' => $webHook,
+                                'success' => true,
                             ];
                         } else {
                             $response = [

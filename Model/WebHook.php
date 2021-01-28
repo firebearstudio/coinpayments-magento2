@@ -16,11 +16,11 @@ class WebHook extends AbstractApi implements WebHookInterface
     /**
      * @param $clientId
      * @param $clientSecret
-     * @param $webHookCallbackUrl
+     * @param $event
      * @return mixed
      * @throws \Exception
      */
-    public function createWebHook($clientId, $clientSecret, $webHookCallbackUrl)
+    public function createWebHook($clientId, $clientSecret, $event)
     {
 
         $action = sprintf(Data::API_WEBHOOK_ACTION, $clientId);
@@ -33,13 +33,9 @@ class WebHook extends AbstractApi implements WebHookInterface
         ];
 
         $requestData = [
-            "notificationsUrl" => $webHookCallbackUrl,
+            "notificationsUrl" => $this->helper->getNotificationUrl($clientId, $event),
             "notifications" => [
-                "invoiceCreated",
-                "invoicePending",
-                "invoicePaid",
-                "invoiceCompleted",
-                "invoiceCancelled",
+                sprintf("invoice%s", $event),
             ],
         ];
 
@@ -91,9 +87,12 @@ class WebHook extends AbstractApi implements WebHookInterface
             if (!empty($transaction)) {
                 /** @var Order $order */
                 $order = $transaction->getOrder();
-                if ($requestData['invoice']['status'] == Data::API_INVOICE_COMPLETED) {
+
+
+                $completed_statuses = array(Data::PAID_EVENT, Data::PENDING_EVENT);
+                if (in_array($requestData['invoice']['status'], $completed_statuses)) {
                     $this->completeOrder($requestData['invoice'], $order, $transaction);
-                } elseif ($requestData['invoice']['status'] == Data::API_INVOICE_CANCELLED) {
+                } elseif ($requestData['invoice']['status'] == Data::CANCELLED_EVENT) {
                     $this->cancelOrder($order);
                 }
             }

@@ -36,8 +36,9 @@ class Data extends AbstractHelper
     const CREATE_INVOICE_URL = 'coinpayments/invoice/create';
     const WEBHOOK_NOTIFICATION_URL = 'coinpayments/webhooks/notification';
 
-    const API_INVOICE_COMPLETED = 'Completed';
-    const API_INVOICE_CANCELLED = 'Cancelled';
+    const PENDING_EVENT = 'Pending';
+    const PAID_EVENT = 'Paid';
+    const CANCELLED_EVENT = 'Cancelled';
 
     /**
      * @var Config
@@ -115,6 +116,20 @@ class Data extends AbstractHelper
     public function getHostUrl($route = '')
     {
         return $this->_getUrl($route, ['_direct' => null]);
+    }
+
+    /**
+     * @param $clientId
+     * @param $event
+     * @return string
+     */
+    public function getNotificationUrl($clientId, $event)
+    {
+        $query = http_build_query(array(
+            'event' => $event,
+            'clientId' => $clientId,
+        ));
+        return $this->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL) . '?' . $query;
     }
 
     /**
