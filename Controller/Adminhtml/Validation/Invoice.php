@@ -16,7 +16,17 @@ class Invoice extends Validation
         $response = [];
         if (!empty($params['client_id']) && $this->helper->getConfig('validated') != $params['client_id']) {
             $clientId = $params['client_id'];
-            $invoice = $this->invoiceModel->createSimple($clientId);
+
+            $invoiceParams = array(
+                'currencyId' => 5057,
+                'invoiceId' => 'Validate invoice',
+                'amount' => 1,
+                'displayValue' => '0.01',
+                'notesLink' => '',
+            );
+
+            $invoice = $this->invoiceModel->createSimple($clientId, $invoiceParams);
+
             if ($invoice) {
                 $this->helper->setConfig('validated', $params['client_id']);
                 $response = [

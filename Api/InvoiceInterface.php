@@ -7,22 +7,17 @@ interface InvoiceInterface
 
     /**
      * @param $clientId
-     * @param $currencyId
-     * @param $invoiceId
-     * @param $amount
+     * @param $invoiceParams
      * @return mixed
      */
-    public function createSimple($clientId, $currencyId, $invoiceId, $amount);
+    public function createSimple($clientId, $invoiceParams);
 
     /**
      * @param $clientId
      * @param $clientSecret
-     * @param $currencyId
-     * @param $invoiceId
-     * @param $amount
-     * @param $displayValue
+     * @param $invoiceParams
      * @return mixed
      */
-    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $displayValue);
+    public function createMerchant($clientId, $clientSecret, $invoiceParams);
 
 }

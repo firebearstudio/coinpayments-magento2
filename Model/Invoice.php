@@ -16,14 +16,11 @@ class Invoice extends AbstractApi implements InvoiceInterface
     /**
      * @param $clientId
      * @param $clientSecret
-     * @param $currencyId
-     * @param $invoiceId
-     * @param $amount
-     * @param $displayValue
+     * @param $invoiceParams
      * @return mixed
      * @throws \Exception
      */
-    public function createMerchant($clientId, $clientSecret, $currencyId, $invoiceId, $amount, $displayValue)
+    public function createMerchant($clientId, $clientSecret, $invoiceParams)
     {
 
         $action = Data::API_MERCHANT_INVOICE_ACTION;
@@ -36,13 +33,18 @@ class Invoice extends AbstractApi implements InvoiceInterface
         ];
 
         $requestData = [
-            "invoiceId" => $invoiceId,
+            "invoiceId" => $invoiceParams['invoiceId'],
             "amount" => [
-                "currencyId" => $currencyId,
-                "displayValue" => $displayValue,
-                "value" => $amount
+                "currencyId" => $invoiceParams['currencyId'],
+                "displayValue" => $invoiceParams['displayValue'],
+                "value" => $invoiceParams['amount']
             ],
+            'noteToRecipient' => $invoiceParams['notesLink'],
         ];
+
+        if (isset($invoiceParams['billingData'])) {
+            $requestData['buyer'] = $this->appendBillingData($invoiceParams['billingData']);
+        }
 
         $requestData = $this->appendInvoiceMetadata($requestData);
         $headers = $this->getRequestHeaders($requestParams, $requestData);
@@ -51,26 +53,28 @@ class Invoice extends AbstractApi implements InvoiceInterface
 
     /**
      * @param $clientId
-     * @param int $currencyId
-     * @param string $invoiceId
-     * @param int $amount
-     * @param string $displayValue
+     * @param $invoiceParams
      * @return mixed
      */
-    public function createSimple($clientId, $currencyId = 5057, $invoiceId = 'Validate invoice', $amount = 1, $displayValue = '0.01')
+    public function createSimple($clientId, $invoiceParams)
     {
 
         $action = Data::API_SIMPLE_INVOICE_ACTION;
 
         $requestData = [
             'clientId' => $clientId,
-            'invoiceId' => $invoiceId,
+            'invoiceId' => $invoiceParams['invoiceId'],
             'amount' => [
-                'currencyId' => $currencyId,
-                "displayValue" => $displayValue,
-                'value' => $amount
+                'currencyId' => $invoiceParams['currencyId'],
+                "displayValue" => $invoiceParams['displayValue'],
+                'value' => $invoiceParams['amount'],
             ],
+            'noteToRecipient' => $invoiceParams['notesLink'],
         ];
+
+        if (isset($invoiceParams['billingData'])) {
+            $requestData['buyer'] = $this->appendBillingData($invoiceParams['billingData']);
+        }
 
         $requestData = $this->appendInvoiceMetadata($requestData);
         return $this->sendPostRequest($action, [], $requestData);
@@ -95,6 +99,10 @@ class Invoice extends AbstractApi implements InvoiceInterface
         return $transaction->getTransactionId();
     }
 
+    /**
+     * @param $requestData
+     * @return mixed
+     */
     protected function appendInvoiceMetadata($requestData)
     {
 
@@ -104,5 +112,30 @@ class Invoice extends AbstractApi implements InvoiceInterface
         ];
 
         return $requestData;
+    }
+
+    /**
+     * @param $billingData
+     * @return array
+     */
+    function appendBillingData($billingData)
+    {
+        return array(
+            "companyName" => $billingData->getCompany(),
+            "name" => array(
+                "firstName" => $billingData->getFirstname(),
+                "lastName" => $billingData->getLastname(),
+            ),
+            "emailAddress" => $billingData->getEmail(),
+            "phoneNumber" => $billingData->getTelephone(),
+            "address" => array(
+                "address1" => $billingData->getStreetLine(1),
+                "address2" => $billingData->getStreetLine(2),
+                "provinceOrState" => $billingData->getRegionCode(),
+                "city" => $billingData->getCity(),
+                "countryCode" => $billingData->getCountryId(),
+                "postalCode" => $billingData->getPostcode()
+            )
+        );
     }
 }

@@ -41,6 +41,10 @@ class Create extends Action implements CsrfAwareActionInterface
      * @var Data
      */
     protected $helper;
+    /**
+     * @var \Magento\Backend\Model\Url
+     */
+    protected $backendUrl;
 
     /**
      * Create constructor.
@@ -51,6 +55,7 @@ class Create extends Action implements CsrfAwareActionInterface
      * @param ScopeConfigInterface $scopeConfig
      * @param Url $urlBuilder
      * @param JsonFactory $jsonResultFactory
+     * @param \Magento\Backend\Model\Url $backendUrl
      */
     public function __construct(
         Context $context,
@@ -59,7 +64,8 @@ class Create extends Action implements CsrfAwareActionInterface
         Session $checkoutSession,
         ScopeConfigInterface $scopeConfig,
         Url $urlBuilder,
-        JsonFactory $jsonResultFactory
+        JsonFactory $jsonResultFactory,
+        \Magento\Backend\Model\Url $backendUrl
     )
     {
 
@@ -69,6 +75,7 @@ class Create extends Action implements CsrfAwareActionInterface
         $this->scopeConfig = $scopeConfig;
         $this->checkoutSession = $checkoutSession;
         $this->jsonResultFactory = $jsonResultFactory;
+        $this->backendUrl = $backendUrl;
         parent::__construct($context);
     }
 
@@ -100,11 +107,22 @@ class Create extends Action implements CsrfAwareActionInterface
                     $merchantWebHooks = $this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY);
                     $invoiceId = sprintf('%s|%s|%s', md5($this->helper->getHostUrl()), $order->getId(), $order->getPayment()->getId());
 
-                    if ($merchantWebHooks) {
-                        $invoicesData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $coinCurrency['id'], $invoiceId, intval($amount), $order->getGrandTotal());
-                        $invoiceData = array_shift($invoicesData['invoices']);
-                    } else {
-                        $invoiceData = $this->invoiceModel->createSimple($clientId, $coinCurrency['id'], $invoiceId, intval($amount), $order->getGrandTotal());
+                    $invoiceParams = array(
+                        'invoiceId' => $invoiceId,
+                        'currencyId' => $coinCurrency['id'],
+                        'displayValue' => $order->getGrandTotal(),
+                        'amount' => intval($amount),
+                        'billingData' => $order->getBillingAddress(),
+                        'notesLink' => $this->backendUrl->getUrl('sales/order/view', ['order_id' => $order->getId()]),
+                    );
+                    try {
+                        if ($merchantWebHooks) {
+                            $invoicesData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $invoiceParams);
+                            $invoiceData = array_shift($invoicesData['invoices']);
+                        } else {
+                            $invoiceData = $this->invoiceModel->createSimple($clientId, $invoiceParams);
+                        }
+                    } catch (\Exception $e) {
                     }
 
                     if (!empty($invoiceData['id'])) {
