@@ -87,8 +87,6 @@ class WebHook extends AbstractApi implements WebHookInterface
             if (!empty($transaction)) {
                 /** @var Order $order */
                 $order = $transaction->getOrder();
-
-
                 $completed_statuses = array(Data::PAID_EVENT, Data::PENDING_EVENT);
                 if (in_array($requestData['invoice']['status'], $completed_statuses)) {
                     $this->completeOrder($requestData['invoice'], $order, $transaction);
@@ -136,6 +134,14 @@ class WebHook extends AbstractApi implements WebHookInterface
             $payment->setAdditionalInformation([Order\Payment\Transaction::RAW_DETAILS => $rawDetails]);
             $payment->addTransactionCommentsToOrder($transaction, __('The authorized amount is %1.', $formatedPrice));
             $payment->setParentTransactionId(null);
+
+            $invoice = $order->prepareInvoice()->register();
+            $invoice->setOrder($order);
+            $invoice->setOrder($order);
+            $invoice->pay();
+
+            $order->addRelatedObject($invoice);
+            $payment->setCreatedInvoice($invoice);
 
             $payment->save();
             $order->save();
