@@ -33,11 +33,11 @@ class Invoice extends AbstractApi implements InvoiceInterface
         ];
 
         $requestData = [
-            "invoiceId" => $invoiceParams['invoiceId'],
-            "amount" => [
-                "currencyId" => $invoiceParams['currencyId'],
-                "displayValue" => $invoiceParams['displayValue'],
-                "value" => $invoiceParams['amount']
+            'invoiceId' => $invoiceParams['invoiceId'],
+            'amount' => [
+                'currencyId' => $invoiceParams['currencyId'],
+                'displayValue' => $invoiceParams['displayValue'],
+                'value' => $invoiceParams['amount']
             ],
             'noteToRecipient' => $invoiceParams['notesLink'],
         ];
@@ -66,7 +66,7 @@ class Invoice extends AbstractApi implements InvoiceInterface
             'invoiceId' => $invoiceParams['invoiceId'],
             'amount' => [
                 'currencyId' => $invoiceParams['currencyId'],
-                "displayValue" => $invoiceParams['displayValue'],
+                'displayValue' => $invoiceParams['displayValue'],
                 'value' => $invoiceParams['amount'],
             ],
             'noteToRecipient' => $invoiceParams['notesLink'],
@@ -107,8 +107,8 @@ class Invoice extends AbstractApi implements InvoiceInterface
     {
 
         $requestData['metadata'] = [
-            "integration" => sprintf("Magento_v%s", $this->helper->getBaseConfigParam(Data::PACKAGE_VERSION)),
-            "hostname" => $this->helper->getHostUrl(),
+            'integration' => sprintf('Magento_v%s', $this->helper->getBaseConfigParam(Data::PACKAGE_VERSION)),
+            'hostname' => $this->helper->getHostUrl(),
         ];
 
         return $requestData;
@@ -120,22 +120,30 @@ class Invoice extends AbstractApi implements InvoiceInterface
      */
     function appendBillingData($billingData)
     {
-        return array(
-            "companyName" => $billingData->getCompany(),
-            "name" => array(
-                "firstName" => $billingData->getFirstname(),
-                "lastName" => $billingData->getLastname(),
+        $params = array(
+            'companyName' => $billingData->getCompany(),
+            'name' => array(
+                'firstName' => $billingData->getFirstname(),
+                'lastName' => $billingData->getLastname(),
             ),
-            "emailAddress" => $billingData->getEmail(),
-            "phoneNumber" => $billingData->getTelephone(),
-            "address" => array(
-                "address1" => $billingData->getStreetLine(1),
-                "address2" => $billingData->getStreetLine(2),
-                "provinceOrState" => $billingData->getRegionCode(),
-                "city" => $billingData->getCity(),
-                "countryCode" => $billingData->getCountryId(),
-                "postalCode" => $billingData->getPostcode()
-            )
+            'emailAddress' => $billingData->getEmail(),
+            'phoneNumber' => $billingData->getTelephone(),
+
         );
+
+
+        if (!empty($billingData->getStreetLine(1)) &&
+            !empty($billingData->getCity()) &&
+            preg_match('/^([A-Z]{2})$/', $billingData->getCountryId())
+        ) {
+            $params['address'] = array(
+                'address1' => $billingData->getStreetLine(1),
+                'address2' => $billingData->getStreetLine(2),
+                'provinceOrState' => $billingData->getRegionCode(),
+                'city' => $billingData->getCity(),
+                'countryCode' => $billingData->getCountryId(),
+                'postalCode' => $billingData->getPostcode()
+            );
+        }
     }
 }
