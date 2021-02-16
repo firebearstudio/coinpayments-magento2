@@ -38,12 +38,10 @@ class WebHook extends Validation
 
                     if (
                         !in_array($this->helper->getNotificationUrl($clientId, DATA::PAID_EVENT), $webHooksUrlsList) ||
-                        !in_array($this->helper->getNotificationUrl($clientId, DATA::PENDING_EVENT), $webHooksUrlsList) ||
                         !in_array($this->helper->getNotificationUrl($clientId, DATA::CANCELLED_EVENT), $webHooksUrlsList)
                     ) {
                         if (
                             !empty($this->webHookModel->createWebHook($clientId, $clientSecret, DATA::PAID_EVENT)) &&
-                            !empty($this->webHookModel->createWebHook($clientId, $clientSecret, DATA::PENDING_EVENT)) &&
                             !empty($this->webHookModel->createWebHook($clientId, $clientSecret, DATA::CANCELLED_EVENT))
 
                         ) {

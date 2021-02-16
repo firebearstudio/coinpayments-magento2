@@ -36,7 +36,6 @@ class Data extends AbstractHelper
     const CREATE_INVOICE_URL = 'coinpayments/invoice/create';
     const WEBHOOK_NOTIFICATION_URL = 'coinpayments/webhooks/notification';
 
-    const PENDING_EVENT = 'Pending';
     const PAID_EVENT = 'Paid';
     const CANCELLED_EVENT = 'Cancelled';
 

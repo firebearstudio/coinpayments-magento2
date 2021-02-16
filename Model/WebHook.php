@@ -87,8 +87,7 @@ class WebHook extends AbstractApi implements WebHookInterface
             if (!empty($transaction)) {
                 /** @var Order $order */
                 $order = $transaction->getOrder();
-                $completed_statuses = array(Data::PAID_EVENT, Data::PENDING_EVENT);
-                if (in_array($requestData['invoice']['status'], $completed_statuses)) {
+                if ($requestData['invoice']['status'] == Data::PAID_EVENT) {
                     $this->completeOrder($requestData['invoice'], $order, $transaction);
                 } elseif ($requestData['invoice']['status'] == Data::CANCELLED_EVENT) {
                     $this->cancelOrder($order);
