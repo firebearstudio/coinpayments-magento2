@@ -126,11 +126,12 @@ class Invoice extends AbstractApi implements InvoiceInterface
                 'firstName' => $billingData->getFirstname(),
                 'lastName' => $billingData->getLastname(),
             ),
-            'emailAddress' => $billingData->getEmail(),
             'phoneNumber' => $billingData->getTelephone(),
-
         );
 
+        if (preg_match('/^.*@.*$/', $billingData->getEmail())) {
+            $params['emailAddress'] = $billingData->getEmail();
+        }
 
         if (!empty($billingData->getStreetLine(1)) &&
             !empty($billingData->getCity()) &&
@@ -145,5 +146,7 @@ class Invoice extends AbstractApi implements InvoiceInterface
                 'postalCode' => $billingData->getPostcode()
             );
         }
+
+        return $params;
     }
 }
