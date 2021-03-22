@@ -166,12 +166,12 @@ class Create extends Action implements CsrfAwareActionInterface
         return array_shift($items);
     }
 
-    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    public function createCsrfValidationException(RequestInterface $request)
     {
         return null;
     }
 
-    public function validateForCsrf(RequestInterface $request): ?bool
+    public function validateForCsrf(RequestInterface $request)
     {
         return true;
     }
