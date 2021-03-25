@@ -74,12 +74,12 @@ class Notification extends Action implements CsrfAwareActionInterface
         return $signature == $encodedPure;
     }
 
-    public function createCsrfValidationException(RequestInterface $request)
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
     {
         return null;
     }
 
-    public function validateForCsrf(RequestInterface $request)
+    public function validateForCsrf(RequestInterface $request): ?bool
     {
         return true;
     }
