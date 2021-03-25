@@ -39,7 +39,7 @@ class Invoice extends AbstractApi implements InvoiceInterface
                 'displayValue' => $invoiceParams['displayValue'],
                 'value' => $invoiceParams['amount']
             ],
-            'noteToRecipient' => $invoiceParams['notesLink'],
+            'notesToRecipient' => $invoiceParams['notesLink'],
         ];
 
         if (isset($invoiceParams['billingData'])) {
@@ -69,7 +69,7 @@ class Invoice extends AbstractApi implements InvoiceInterface
                 'displayValue' => $invoiceParams['displayValue'],
                 'value' => $invoiceParams['amount'],
             ],
-            'noteToRecipient' => $invoiceParams['notesLink'],
+            'notesToRecipient' => $invoiceParams['notesLink'],
         ];
 
         if (isset($invoiceParams['billingData'])) {

@@ -19,6 +19,7 @@ class Data extends AbstractHelper
     const INVOICE_CACHE_PREFIX = 'CoinpaymentsInvoice';
 
     const XML_PATH_CONFIG_COINPAYMENTS = 'payment/coin_payments/';
+    const XML_PATH_CONFIG_GENERAL = 'general/';
 
     const CLIENT_ID_KEY = 'client_id';
     const CLIENT_SECRET_KEY = 'client_secret';
@@ -66,6 +67,15 @@ class Data extends AbstractHelper
     public function getConfig($param)
     {
         return $this->scopeConfig->getValue(self::XML_PATH_CONFIG_COINPAYMENTS . $param);
+    }
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function getGeneralConfig($param)
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_CONFIG_GENERAL . $param);
     }
 
     /**

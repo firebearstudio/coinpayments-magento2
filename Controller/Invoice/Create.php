@@ -107,15 +107,23 @@ class Create extends Action implements CsrfAwareActionInterface
                     $merchantWebHooks = $this->helper->getConfig(Data::CLIENT_WEBHOOKS_KEY);
                     $invoiceId = sprintf('%s|%s|%s', md5($this->helper->getHostUrl()), $order->getId(), $order->getPayment()->getId());
 
-                    $invoiceParams = array(
-                        'invoiceId' => $invoiceId,
-                        'currencyId' => $coinCurrency['id'],
-                        'displayValue' => $order->getGrandTotal(),
-                        'amount' => intval($amount),
-                        'billingData' => $order->getBillingAddress(),
-                        'notesLink' => $this->backendUrl->getUrl('sales/order/view', ['order_id' => $order->getId()]),
-                    );
                     try {
+                        $notesLink = sprintf(
+                            "%s|Store name: %s|Order #%s",
+                            $this->backendUrl->getUrl('sales/order/view', ['order_id' => $order->getId(), '_nosecret' => true]),
+                            $this->helper->getGeneralConfig('store_information/name'),
+                            $order->getId()
+                        );
+
+                        $invoiceParams = array(
+                            'invoiceId' => $invoiceId,
+                            'currencyId' => $coinCurrency['id'],
+                            'displayValue' => $order->getGrandTotal(),
+                            'amount' => intval($amount),
+                            'billingData' => $order->getBillingAddress(),
+                            'notesLink' => $notesLink,
+                        );
+
                         if ($merchantWebHooks) {
                             $invoicesData = $this->invoiceModel->createMerchant($clientId, $clientSecret, $invoiceParams);
                             $invoiceData = array_shift($invoicesData['invoices']);
