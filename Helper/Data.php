@@ -122,9 +122,9 @@ class Data extends AbstractHelper
      * @param string $route
      * @return string
      */
-    public function getHostUrl($route = '', $params = ['_direct' => null])
+    public function getHostUrl($route = '')
     {
-        return $this->_getUrl($route, $params);
+        return $this->_getUrl($route, ['_direct' => null]);
     }
 
     /**
@@ -138,10 +138,7 @@ class Data extends AbstractHelper
             'event' => $event,
             'clientId' => $clientId,
         ));
-        return $this->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL, [
-            '_nosid' => true,
-            '_query' => $query,
-        ]);
+        return $this->getHostUrl(DATA::WEBHOOK_NOTIFICATION_URL) . '?' . $query;
     }
 
     /**
