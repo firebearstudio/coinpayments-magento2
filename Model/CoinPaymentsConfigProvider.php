@@ -91,7 +91,7 @@ class CoinPaymentsConfigProvider implements ConfigProviderInterface
                 'coinpayments' => [
                     'available_currencies' => $currencies,
                     'accepted_currencies' => $acceptedCurrencies,
-                    'logo' => $this->_assetRepo->getUrl('Coinpayments_CoinPayments::images/logo.svg'),
+                    'logo' => $this->_assetRepo->getUrl('Coinpayments_CoinPayments::images/logo.png'),
                     'direct_mode' => (int)$isDirect,
                     'url' => $coinpaymentsDomain,
                     'api_url' => $coinpaymentsApi
