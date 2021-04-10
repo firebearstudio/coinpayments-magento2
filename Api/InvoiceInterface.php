@@ -1,5 +1,9 @@
 <?php
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 namespace Coinpayments\CoinPayments\Api;
 
 interface InvoiceInterface
