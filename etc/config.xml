@@ -11,7 +11,7 @@
         <payment>
             <coin_payments>
                 <active>1</active>
-                <model>Firebear\CoinPayments\Model\Methods\Coinpayments</model>
+                <model>Coinpayments\CoinPayments\Model\Methods\Coinpayments</model>
                 <order_status>pending</order_status>
                 <title>Coin Payments</title>
                 <allowspecific>0</allowspecific>
@@ -21,6 +21,8 @@
         <coinpayment>
             <conf>
                 <url_payment>https://www.coinpayments.net</url_payment>
+                <api_payment>https://www.coinpayments.net/api.php</api_payment>
+                <api_version>1</api_version>
             </conf>
         </coinpayment>
     </default>`

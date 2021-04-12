@@ -11,7 +11,7 @@ $successUrl  = $block->getSuccessUrl();
 $failUrl     = $block->getFailUrl();
 ?>
 <form name="coinpaymentsform" method="post" action="https://www.coinpayments.net/index.php">
-    <input type="hidden" name="cmd" value="_pay">
+    <input type="hidden" name="cmd" value="_pay_auto">
     <input type="hidden" name="reset" value="1">
     <input type="hidden" name="merchant" value="<?php echo $payemntData['merchant_id']; ?>">
     <input type="hidden" name="item_name" value="<?php echo $payemntData['item_name']; ?> Order">
@@ -27,7 +27,7 @@ $failUrl     = $block->getFailUrl();
     ); ?>">
     <input type="hidden" name="shippingf" value="<?php echo $block->getShippingAmount(); ?>">
     <input type="hidden" name="taxf" value="<?php $quoteData->getShippingAddress()->getTaxAmount(); ?>">
-    <input type="hidden" name="amountf" value="<?php echo $quoteData->getBaseGrandTotal(); ?>">
+    <input type="hidden" name="amountf" value="<?php echo $quoteData->getSubtotal(); ?>">
     <input type="hidden" name="success_url" value="<?php echo $successUrl; ?>">
     <input type="hidden" name="cancel_url" value="<?php echo $failUrl; ?>">
     <input type="hidden" name="ipn_url" value="<?php echo htmlspecialchars($block->getIpnUrl(), ENT_QUOTES, 'utf-8'); ?>">
@@ -37,12 +37,12 @@ $failUrl     = $block->getFailUrl();
         'utf-8'
     ); ?>">
     <input type="hidden" name="first_name" value="<?php echo htmlspecialchars(
-        $quoteData->getCustomerFirstname(),
+        $quoteData->getBillingAddress()->getFirstname(),
         ENT_QUOTES,
         'utf-8'
     ); ?>">
     <input type="hidden" name="last_name" value="<?php echo htmlspecialchars(
-        $quoteData->getCustomerLastname(),
+        $quoteData->getBillingAddress()->getLastname(),
         ENT_QUOTES,
         'utf-8'
     ); ?>">

@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Controller\Invoice;
+namespace Coinpayments\CoinPayments\Controller\Invoice;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
@@ -47,7 +47,7 @@ class Index extends \Magento\Framework\App\Action\Action
     private $orderRepository;
 
     /**
-     * @var \Firebear\CoinPayments\Helper\Data
+     * @var \Coinpayments\CoinPayments\Helper\Data
      */
     private $coinPayemtnsHelper;
 
@@ -60,7 +60,7 @@ class Index extends \Magento\Framework\App\Action\Action
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Sales\Model\OrderRepository $orderRepository
-     * @param \Firebear\CoinPayments\Helper\Data $coinPayemtnsHelper
+     * @param \Coinpayments\CoinPayments\Helper\Data $coinPayemtnsHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -70,7 +70,7 @@ class Index extends \Magento\Framework\App\Action\Action
         \Magento\Checkout\Model\Session $checkoutSession,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Sales\Model\OrderRepository $orderRepository,
-        \Firebear\CoinPayments\Helper\Data $coinPayemtnsHelper
+        \Coinpayments\CoinPayments\Helper\Data $coinPayemtnsHelper
     ) {
         $this->_coreRegistry = $coreRegistry;
         $this->config = $config;

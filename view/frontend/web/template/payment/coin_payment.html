@@ -9,8 +9,10 @@
         <input type="radio"
                name="payment[method]"
                class="radio"
-               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()" />
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
         <label data-bind="attr: {'for': getCode()}" class="label">
+            <img data-bind="attr: {src: getPaymentAcceptanceMarkSrc(), alt: $t('Acceptance Mark')}"
+                 class="payment-icon" width="36px"/>
             <span data-bind="text: getTitle()"></span>
         </label>
     </div>
@@ -18,11 +20,21 @@
         <!-- ko foreach: getRegion('messages') -->
         <!-- ko template: getTemplate() --><!-- /ko -->
         <!--/ko-->
-        <fieldset class="fieldset" data-bind='attr: {id: "payment_form_" + getCode()}'>
-            <div class="payment-method-note">
-                <span data-bind="html: getRedirectionText()"></span>
-            </div>
-        </fieldset>
+        <div class="payment-method-note">
+            <span data-bind="ifnot: getIsDirect()">
+                <!-- ko template: 'Coinpayments_CoinPayments/payment/coin_payment_message' --><!-- /ko -->
+            </span>
+            <form
+                class="form"
+                id="payment_form_coimnpayments"
+                action="#"
+                name="pay"
+                method="post"
+                data-bind="if: getIsDirect()"
+            >
+                <!-- ko template: 'Coinpayments_CoinPayments/payment/coin_payment_form' --><!-- /ko -->     
+            </form>
+        </div>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->
@@ -34,11 +46,11 @@
                         type="submit"
                         data-bind="
                         click: placeOrder,
-                        enable: (getCode() == isChecked()),
-                        attr: {title: $t('Continue')},
+                        enable: getAllowPlaceOrder(),
+                        attr: {title: $t('Place Order')},
                         css: {disabled: !isPlaceOrderActionAllowed()}
                         ">
-                    <span data-bind="i18n: 'Continue'"></span>
+                    <span data-bind="i18n: 'Place Order'"></span>
                 </button>
             </div>
         </div>

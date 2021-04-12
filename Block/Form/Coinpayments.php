@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Block\Form;
+namespace Coinpayments\CoinPayments\Block\Form;
 
 use Magento\Customer\Helper\Session\CurrentCustomer;
 
@@ -29,7 +29,7 @@ class Coinpayments extends \Magento\Payment\Block\Form
 
     protected function _construct()
     {
-        $template = 'Firebear_CoinPayments::coinpayments/form/coinpayments.phtml';
+        $template = 'Coinpayments_CoinPayments::coinpayments/form/coinpayments.phtml';
         $this->setTemplate($template);
 
         parent::__construct();

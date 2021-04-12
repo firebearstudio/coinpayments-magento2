@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Helper;
+namespace Coinpayments\CoinPayments\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -48,5 +48,16 @@ class Data extends AbstractHelper
     public function getGeneralConfig($code, $storeId = null)
     {
         return $this->getConfigValue(self::XML_PATH_CONFIG_COINPAYMENTS . $code, $storeId);
+    }
+
+    public function getInvoiceTemplate()
+    {
+        if ($this->getConfigValue('payment/coin_payments/is_direct')) {
+            $template =  'Coinpayments_CoinPayments::coinpayments/iframe.phtml';
+        } else {
+            $template = 'Coinpayments_CoinPayments::coinpayments/status.phtml';
+        }
+
+        return $template;
     }
 }

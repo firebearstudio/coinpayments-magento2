@@ -4,12 +4,14 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Controller\Ipn;
+namespace Coinpayments\CoinPayments\Controller\Ipn;
 
 use Magento\Sales\Model\Order;
 use Magento\Framework\App\Action\Context;
-use Firebear\CoinPayments\Logger\Logger;
-use Firebear\CoinPayments\Helper\Data as CoinPaymentHelper;
+use Coinpayments\CoinPayments\Logger\Logger;
+use Coinpayments\CoinPayments\Helper\Data as CoinPaymentHelper;
+use Magento\Framework\App\Request\Http as HttpRequest;
+
 
 /**
  * Class Index
@@ -47,12 +49,23 @@ class Index extends \Magento\Framework\App\Action\Action
         Logger $logger,
         CoinPaymentHelper $helper
     ) {
+        parent::__construct($context);
+        
         $this->orderRepository = $orderRepository;
         $this->log = $logger;
         $this->helper = $helper;
-        parent::__construct($context);
+        // Fix for Magento2.3 adding isAjax to the request params
+        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
+            $request = $this->getRequest();
+            if ($request instanceof HttpRequest && $request->isPost()) {
+                $request->setParam('isAjax', true);
+            }
+        }
+        
+        
     }
-
+    
+    
     public function execute()
     {
         if ($this->getRequest()->getParams()) {
@@ -61,7 +74,7 @@ class Index extends \Magento\Framework\App\Action\Action
                 $order_id = (int)$this->getRequest()->getParam('invoice');
                 if ($order = $this->orderRepository->get($order_id)) {
                     if ($order->getState() == Order::STATE_NEW) {
-                        if ($this->getRequest()->getParam('ipn_type') == 'button') {
+                        if ($this->getRequest()->getParam('ipn_type') == 'button' || $this->getRequest()->getParam('ipn_type') == 'simple') {
                             if ($this->getRequest()->getParam('currency1') == $order->getBaseCurrencyCode()) {
                                 if ($this->getRequest()->getParam('amount1') >= $order->getBaseGrandTotal()) {
                                     $status = (int)$this->getRequest()->getParam('status');
@@ -118,21 +131,21 @@ class Index extends \Magento\Framework\App\Action\Action
                     . ' ' . $this->getRequest()->getParam('currency1') . '<br />';
                 $str .= 'Received Amount: ' . sprintf('%.08f', $this->getRequest()->getParam('amount2'))
                     . ' ' . $this->getRequest()->getParam('currency2');
+                $order->addStatusToHistory($this->helper->getGeneralConfig('status_order_paid'), $str, true);
                 $order->setState(
                     $this->helper->getGeneralConfig('status_order_paid'),
                     true,
                     $str
                 )->setStatus($this->helper->getGeneralConfig('status_order_paid'));
-                $this->_objectManager->create('\Magento\Sales\Model\OrderNotifier')
-                    ->notify($order);
+                $this->_objectManager->create('\Magento\Sales\Model\OrderNotifier')->notify($order);
             } else {
                 //order pending
+                $str = 'CoinPayments.net Payment Status: ' . $this->getRequest()->getParam('status_text');
+                $order->addStatusToHistory(Order::STATE_NEW, $str, true);
                 $order->setState(
                     Order::STATE_NEW,
                     true,
-                    'CoinPayments.net Payment Status: ' . $this->getRequest()->getParam(
-                        'status_text'
-                    )
+                    $str
                 )->setStatus(Order::STATE_PROCESSING);
             }
             $order->save();
@@ -171,13 +184,7 @@ class Index extends \Magento\Framework\App\Action\Action
                 return true;
             }
         } else {
-            if ($ipn['ipn_mode'] == 'httpauth' && $this->helper->getGeneralConfig('ipn_mode') == 1) {
-                if ($this->checkHttpauthIpn($ipn)) {
-                    return true;
-                }
-            } else {
-                $this->logAndDie('Unknown ipn_mode.');
-            }
+            $this->logAndDie('Unknown ipn_mode.');
         }
 
         return false;
@@ -226,39 +233,5 @@ class Index extends \Magento\Framework\App\Action\Action
         }
 
         return true;
-    }
-
-    private function checkHttpauthIpn($ipn)
-    {
-        if (isset($_SERVER['PHP_AUTH_USER'])
-            && $_SERVER['PHP_AUTH_USER'] == trim(
-                $this->helper->getGeneralConfig('merchant_id')
-            )
-        ) {
-            if (isset($_SERVER['PHP_AUTH_PW'])
-                && $_SERVER['PHP_AUTH_PW'] == trim(
-                    $this->helper->getGeneralConfig('ipn_secret')
-                )
-            ) {
-                $merchant = isset($ipn['merchant']) ? $ipn['merchant'] : '';
-                if (empty($merchant)) {
-                    $this->logAndDie('No Merchant ID passed');
-                }
-                if ($merchant != trim($this->helper->getGeneralConfig('merchant_id'))) {
-                    $this->logAndDie('Invalid Merchant ID');
-                }
-
-                return true;
-            } else {
-                $this->logAndDie(
-                    'IPN Secret not correct or no HTTP Auth variables passed. If you are using PHP in CGI mode try the HMAC method.'
-                );
-            }
-        } else {
-            $this->logAndDie(
-                'Merchant ID not correct or no HTTP Auth variables passed. If you are using PHP in CGI mode try the HMAC method.'
-            );
-        }
-        return false;
     }
 }

@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Block;
+namespace Coinpayments\CoinPayments\Block;
 
 /**
  * Base payment iformation block
@@ -14,7 +14,7 @@ class Info extends \Magento\Framework\View\Element\Template
     /**
      * @var string
      */
-    protected $_template = 'Firebear_CoinPayments::coinpayments/info/default.phtml';
+    protected $_template = 'Coinpayments_CoinPayments::coinpayments/info/default.phtml';
 
     /**
      * @return mixed

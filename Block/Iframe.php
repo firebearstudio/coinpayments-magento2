@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Block;
+namespace Coinpayments\CoinPayments\Block;
 
 class Iframe extends \Magento\Framework\View\Element\Template
 {
@@ -20,7 +20,6 @@ class Iframe extends \Magento\Framework\View\Element\Template
      * @var \Magento\Quote\Model\QuoteRepository
      */
     protected $quoteRepository;
-
     /**
      * Iframe constructor.
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -63,8 +62,7 @@ class Iframe extends \Magento\Framework\View\Element\Template
      */
     public function getIpnUrl()
     {
-        $quoteModel = $this->getQuote();
-        return $this->getUrl('coinpayments/ipn/index');
+        return $this->getUrl('coinpayments/ipn/handle');
     }
 
     /**

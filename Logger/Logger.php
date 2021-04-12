@@ -4,7 +4,7 @@
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
 
-namespace Firebear\CoinPayments\Logger;
+namespace Coinpayments\CoinPayments\Logger;
 
 class Logger extends \Monolog\Logger
 {
