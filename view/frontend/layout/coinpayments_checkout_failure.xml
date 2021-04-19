@@ -5,7 +5,8 @@
  * See COPYING.txt for license details.
  */
 -->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="page.main.title">
             <action method="setPageTitle">
@@ -13,7 +14,8 @@
             </action>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Magento\Checkout\Block\Onepage\Failure" name="checkout.failure" template="onepage/failure.phtml" cacheable="false"/>
+            <block class="Magento\Checkout\Block\Onepage\Failure" name="checkout.failure"
+                   template="onepage/failure.phtml" cacheable="false"/>
         </referenceContainer>
     </body>
 </page>

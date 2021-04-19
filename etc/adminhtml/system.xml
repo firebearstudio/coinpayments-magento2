@@ -1,76 +1,74 @@
 <?xml version="1.0"?>
-<!--
-/**
- * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
- * @author   : Firebear Studio <fbeardev@gmail.com>
- */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Config/etc/system_file.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../Config/etc/system_file.xsd">
     <system>
         <section id="payment">
-            <group id="coin_payments" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>CoinPayments.net</label>
+            <group id="coin_payments" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <fieldset_css>complex coin-payment-section</fieldset_css>
+                <frontend_model>Magento\Paypal\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
+                <label>
+                    <![CDATA[
+                    <div class="coin-payment-logo"></div>
+                    <div class="coin-payment-description">
+                        The convenient, trusted way to pay.<br/>
+                        Let your customers check out in just a few clicks or taps using the
+                            shipping and payment info already stored in their Coinpayments.Net account.
+                    </div>
+                    ]]>
+                </label>
 
-                <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="receive_currency" translate="label comment" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Currency</label>
-                    <source_model>Coinpayments\CoinPayments\Model\Config\Source\Currency</source_model>
-                    <comment><![CDATA[Currency that will coinpayments receive]]></comment>
+                <field id="client_id" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0"
+                       showInStore="0">
+                    <label>Client ID</label>
+                    <validate>
+                        required-entry validate-length minimum-length-22 maximum-length-32 coin-invoice-validate
+                    </validate>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
                 </field>
-                <field id="is_direct" translate="label comment" sortOrder="2" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Direct Mode</label>
+
+                <field id="webhooks" translate="label comment" sortOrder="3" type="select" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Enable WebHooks</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
                 </field>
-                <field id="title" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Name of CoinPayments method on checkout</label>
-                    <comment><![CDATA[You can specify here accepted coins or any other information to you customers.]]></comment>
+
+                <field id="client_secret" translate="label" type="text" sortOrder="4" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Client Secret</label>
+                    <validate>
+                        required-entry validate-length minimum-length-22 maximum-length-44 coin-webhooks-validate
+                    </validate>
+                    <depends>
+                        <field id="webhooks">1</field>
+                        <field id="active">1</field>
+                    </depends>
                 </field>
-                <field id="merchant_id" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Your CoinPayments.net Merchant ID</label>
-                    <comment><![CDATA[You can find this by logging in to your CoinPayments.net  - Account -> Account Settings -> Basic Settings -> Your Merchant ID.]]></comment>
-                </field>
-                <field id="ipn_secret" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>IPN Secret</label>
-                    <comment><![CDATA[Pre-shared secret key to secure the transaction. Your IPN Secret should be a good random string and should match here and on your Edit Settings page at CoinPayments.net.]]></comment>
-                </field>
-                <field id="public_key" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Public Key</label>
-                    <comment><![CDATA[You can find in your CoinPayments account]]></comment>
-                </field>
-                <field id="secret_key" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Private Key</label>
-                    <comment><![CDATA[You can find in your CoinPayments account]]></comment>
-                </field>
-                <field id="ipn_debug" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>IPN Debug Email</label>
-                    <comment><![CDATA[This email will receive a copy of IPN errors. (optional).]]></comment>
-                </field>
-                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Payment from Applicable Countries</label>
-                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
-                </field>
-                <field id="specificcountry" translate="label" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Payment from Specific Countries</label>
-                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
-                    <can_be_empty>1</can_be_empty>
-                </field>
-                <field id="status_order_placed" translate="label,comment" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Placed order status</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
-                    <comment><![CDATA[Status of new placed order after Magento checkout is complete, but CoinPayments didn't recieve funds.]]></comment>
-                </field>
-                <field id="status_order_paid" translate="label,comment" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+
+                <field id="status_order_paid" translate="label,comment" type="select" sortOrder="5" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
                     <label>Paid order status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
-                    <comment><![CDATA[Status of successfully paid order in Magento when CoinPayments recieved funds and sent confirmation to Magento.]]></comment>
+                    <validate>required-entry</validate>
+                    <comment>
+                        <![CDATA[Status of successfully paid order in Magento when CoinPayments recieved funds and sent confirmation to Magento.]]>
+                    </comment>
+                    <depends>
+                        <field id="webhooks">1</field>
+                        <field id="active">1</field>
+                    </depends>
                 </field>
-                <field id="debug" translate="label comment" sortOrder="11" type="select" showInDefault="13" showInWebsite="1" showInStore="1">
-                    <label>Debug</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
+
             </group>
         </section>
     </system>

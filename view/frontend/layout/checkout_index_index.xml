@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<!--
-/**
- * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
- * @author   : Firebear Studio <fbeardev@gmail.com>
- */
--->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceContainer name="content">
+            <block template="Coinpayments_CoinPayments::js_vars.phtml"
+                   class="Magento\Backend\Block\Template"
+                   name="custom_js_backend"
+                   before="checkout.root"/>
+        </referenceContainer>
         <referenceBlock name="checkout.root">
             <arguments>
                 <argument name="jsLayout" xsi:type="array">
@@ -20,20 +21,17 @@
                                             <item name="children" xsi:type="array">
                                                 <item name="payment" xsi:type="array">
                                                     <item name="children" xsi:type="array">
-                                                        <item name="additional-payment-validators" xsi:type="array">
-                                                            <item name="children" xsi:type="array">
-                                                                <item name="validate-direct-form" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Coinpayments_CoinPayments/js/view/payment/validate-direct-form</item>
-                                                                </item>
-                                                            </item>
-                                                        </item>
                                                         <item name="renders" xsi:type="array">
                                                             <item name="children" xsi:type="array">
                                                                 <item name="coin_payments" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Coinpayments_CoinPayments/js/view/payment/coin_payments</item>
+                                                                    <item name="component" xsi:type="string">
+                                                                        Coinpayments_CoinPayments/js/view/payment/coin_payments
+                                                                    </item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="coin_payments" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
                                                                     </item>
                                                                 </item>

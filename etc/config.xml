@@ -1,18 +1,11 @@
 <?xml version="1.0"?>
-<!--
-/**
- * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
- * @author   : Firebear Studio <fbeardev@gmail.com>
- */
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <payment>
             <coin_payments>
-                <active>1</active>
+                <active>0</active>
                 <model>Coinpayments\CoinPayments\Model\Methods\Coinpayments</model>
-                <order_status>pending</order_status>
                 <title>Coin Payments</title>
                 <allowspecific>0</allowspecific>
                 <group>coinpayments</group>
@@ -20,10 +13,11 @@
         </payment>
         <coinpayment>
             <conf>
-                <url_payment>https://www.coinpayments.net</url_payment>
-                <api_payment>https://www.coinpayments.net/api.php</api_payment>
+                <api_host>https://api.coinpayments.net</api_host>
+                <checkout_host>https://checkout.coinpayments.net</checkout_host>
                 <api_version>1</api_version>
+                <package_version>2.0.0</package_version>
             </conf>
         </coinpayment>
-    </default>`
+    </default>
 </config>
