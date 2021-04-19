@@ -1,0 +1,38 @@
+<fieldset data-bind="attr: {class: 'fieldset coinpayments' + getCode(), id: 'payment_fields_' + getCode()}">
+    <div class="field required" data-bind="attr: {id: getCode() + 'currency_select_exchange'}">
+        <label data-bind="attr: {for: getCode() + '_currency'}" class="label">
+            <span><!-- ko i18n: 'Currency'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <div class="fields group group-2">
+                <div class="field no-label">
+                    <div class="control">
+                        <select name="payment[crypto_currency]"
+                                class="select"
+                                data-bind="
+                            attr: {id: getCode() + '_crypto_currency', 'data-container': getCode() + '_crypto_currency'},
+                            event: { change: getConvertedAmount},
+                            enable: 1,
+                            options: getAcceptedCurrencies(),
+                            optionsValue: 'value',
+                            optionsText: 'name',
+                            optionsCaption: $t('Currency')">
+                        </select>
+                    </div>
+                </div>
+                <div class="field no-label">
+                    <div class="control">
+                        <input
+                                data-bind="value: getGrandTotal() + ' ' + getCurrencyCode()"
+                                class="input-text"
+                                id="converted_amount_coinpayments"
+                                type="text"
+                                disabled
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="mage-error" data-bind="attr: {id: getCode() + '_crypto_currency_error'}"></div>
+        </div>
+    </div>
+</fieldset>
