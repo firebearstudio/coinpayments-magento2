@@ -1,0 +1,35 @@
+<?php
+$transactionData = $block->getTransactionData();
+$currency = $block->getTransactionCurrency();
+?>
+
+<div class="checkout-success">
+    <p>Your order # is: <span><?php echo $block->getLastOrderIncrementId(); ?></span>.</p>
+    <p>We'll email you an order confirmation with details and tracking info.</p>
+    <?php if ($transactionData->error == 'ok') : ?>
+        <h3><a href="<?php echo $transactionData->result->status_url; ?>" target="_blank">Status link</a></h3>
+        <div>
+            <div>
+                <p>
+                    <span><?php echo __('Address'); ?></span>:
+                    <span><?php echo $transactionData->result->address ?></span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span><?php echo __('Amount'); ?></span>:
+                    <span><?php echo $transactionData->result->amount . ' ' . $currency ?></span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span><?php echo __('QR code'); ?></span>:
+                    <span><img class="thumb" src="<?php echo $transactionData->result->qrcode_url; ?>"></span>
+                </p>
+            </div>
+        </div>
+    <?php else : ?>
+        <h3 class="sub-title"><?php echo __('Something went wrong'); ?></h3>
+        <p class="error"><?php echo $transactionData->error ?></p>
+    <?php endif; ?>
+</div>

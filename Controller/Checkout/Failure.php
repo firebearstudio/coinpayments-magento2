@@ -4,43 +4,35 @@ namespace Coinpayments\CoinPayments\Controller\Checkout;
 
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Order;
-use Magento\Checkout\Model\Session;
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\App\Action\Action;
+use Psr\Log\LoggerInterface;
 
-class Failure extends Action
+class Failure extends \Magento\Framework\App\Action\Action
 {
-    /**
-     * @var Session
-     */
-    protected $checkoutSession;
-    /**
-     * @var OrderRepository
-     */
-    protected $orderRepository;
-    /**
-     * @var PageFactory
-     */
-    protected $resultPageFactory;
+    private $checkoutSession;
+    private $orderFactory;
+    private $orderRepository;
+    private $resultPageFactory;
+    private $logger;
+    private $cacheTypeList;
+    private $cacheFrontendPool;
 
-    /**
-     * Failure constructor.
-     * @param Session $checkoutSession
-     * @param OrderRepository $orderRepository
-     * @param Context $context
-     * @param PageFactory $resultPageFactory
-     */
     public function __construct(
-        Session $checkoutSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Sales\Model\OrderFactory $orderFactory,
         OrderRepository $orderRepository,
-        Context $context,
-        PageFactory $resultPageFactory
-    )
-    {
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
+        LoggerInterface $logger,
+        \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
+        \Magento\Framework\App\Cache\Frontend\Pool $cacheFrontendPool
+    ) {
         $this->checkoutSession = $checkoutSession;
+        $this->orderFactory = $orderFactory;
         $this->orderRepository = $orderRepository;
         $this->resultPageFactory = $resultPageFactory;
+        $this->logger = $logger;
+        $this->cacheTypeList = $cacheTypeList;
+        $this->cacheFrontendPool = $cacheFrontendPool;
         parent::__construct($context);
     }
 
@@ -48,15 +40,31 @@ class Failure extends Action
     public function execute()
     {
         $lastOrderId = $this->getRealOrderId();
-        $order = $this->orderRepository->get($lastOrderId);
+        $order       = $this->orderRepository->get($lastOrderId);
         $order->setStatus(Order::STATE_CANCELED)->setState(Order::STATE_CANCELED);
         $this->orderRepository->save($order);
+        $this->logger->info('ORDER INFO: ' . $order->getStatus() . $order->getState());
+
         return $this->resultPageFactory->create();
     }
 
+
+    // Use this method to get ID    
     public function getRealOrderId()
     {
-        return $this->checkoutSession->getLastOrderId();
+        $lastorderId = $this->checkoutSession->getLastOrderId();
+
+        return $lastorderId;
     }
 
+    public function getOrder()
+    {
+        if ($this->checkoutSession->getLastOrderId()) {
+            $order = $this->orderFactory->create()->loadByIncrementId($this->checkoutSession->getLastRealOrderId());
+
+            return $order;
+        }
+
+        return false;
+    }
 }

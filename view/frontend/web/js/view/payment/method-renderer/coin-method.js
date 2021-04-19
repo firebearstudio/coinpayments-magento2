@@ -1,3 +1,8 @@
+/**
+ * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
+ * @author   : Firebear Studio <fbeardev@gmail.com>
+ */
+
 define(
     [
         'ko',
@@ -10,9 +15,9 @@ define(
         'Magento_Checkout/js/checkout-data',
         'Magento_Checkout/js/model/payment/additional-validators',
         'mage/url',
+        'Coinpayments_CoinPayments/js/action/set-payment-method',
         'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Checkout/js/model/error-processor',
-        'Magento_Checkout/js/model/totals',
+        'Magento_Checkout/js/model/error-processor'
     ],
     function (ko,
               Component,
@@ -24,16 +29,11 @@ define(
               checkoutData,
               additionalValidators,
               url,
+              setPaymentMethodAction,
               fullScreenLoader,
-              errorProcessor,
-              totals
-    ) {
+              errorProcessor) {
         'use strict';
-
-        window.fullScreenLoader = fullScreenLoader;
-        window.url = url;
-
-        var a = Component.extend({
+        return Component.extend({
             defaults: {
                 template: 'Coinpayments_CoinPayments/payment/coin_payment'
             },
@@ -43,8 +43,38 @@ define(
             getCode: function () {
                 return 'coin_payments';
             },
+            /**
+             * @returns {boolean}
+             */
+            isActive: function () {
+                return true;
+            },
             afterPlaceOrder: function () {
-                this.createInvoice();
+                // fullScreenLoader.startLoader();
+                var self = this;
+                if (self.getIsDirect()) {
+                    self.createTransaction(
+                        window.checkoutConfig.payment.coinpayments.currentData.currency,
+                        window.checkoutConfig.payment.coinpayments.currentData.total,
+                        url.build('coinpayments/transaction/status/')
+                    );
+                } else {
+                    window.location.replace(url.build('coinpayments/invoice/index/'));
+                }
+            },
+            getRedirectionText: function () {
+
+                var iframeHtml;
+                jQuery.ajax({
+                    url: url.build('coinpayments/iframe/index/'),
+                    async: false,
+                    dataType: "json",
+                    success: function (a) {
+                        iframeHtml = a.html;
+                    }
+
+                });
+                return iframeHtml;
             },
             /**
              *
@@ -62,7 +92,6 @@ define(
              * @returns {boolean}
              */
             placeOrder: function (data, event) {
-
                 if (event) {
                     event.preventDefault();
                 }
@@ -74,7 +103,6 @@ define(
                     $(loginFormSelector).validation();
                     emailValidationResult = Boolean($(loginFormSelector + ' input[name=username]').valid());
                 }
-
                 if (emailValidationResult && this.validate() && additionalValidators.validate()) {
                     this.isPlaceOrderActionAllowed(false);
                     placeOrder = placeOrderAction(this.getData(), false, this.messageContainer);
@@ -86,17 +114,75 @@ define(
                 }
                 return false;
             },
-            getBaseGrandTotal: function () {
-                if (totals.totals()) {
-                    var grandTotal = parseFloat(totals.totals()['grand_total']);
-                    return grandTotal;
+            getMailingAddress: function () {
+                return window.checkoutConfig.payment.checkmo.mailingAddress;
+            },
+
+            getCurrencies: function () {
+                if (!window.checkoutConfig.payment.coinpayments.available_currencies.error) {
+                    return window.checkoutConfig.payment.coinpayments.available_currencies;
                 }
-                return window.checkoutConfig.totalsData.base_grand_total;
+                return [{error: "error"}];
+            },
+            getAcceptedCurrencies: function () {
+                if (!window.checkoutConfig.payment.coinpayments.accepted_currencies.error) {
+                    return window.checkoutConfig.payment.coinpayments.accepted_currencies;
+                }
+                return [{error: "error"}];
             },
             getPaymentAcceptanceMarkSrc: function () {
                 return window.checkoutConfig.payment.coinpayments.logo;
             },
+            getIsDirect: function () {
+                return window.checkoutConfig.payment.coinpayments.direct_mode;
+            },
+            getCoinpaymentsUrl: function () {
+                return window.checkoutConfig.payment.coinpayments.url;
+            },
+
+            getBaseGrandTotal: function () {
+                return window.checkoutConfig.totalsData.base_grand_total;
+            },
+            getGrandTotal: function () {
+                return window.checkoutConfig.totalsData.grand_total;
+            },
+            getCurrencyCode: function () {
+                return window.checkoutConfig.totalsData.quote_currency_code;
+            },
             /**
+             *
+             * @param element
+             * @param event
+             */
+            getConvertedAmount: function (element, event) {
+                var shopCurrency = window.checkoutConfig.totalsData.base_currency_code;
+                var elemToChange = $('#converted_amount_coinpayments');
+                var total = this.getBaseGrandTotal();
+                var currentCurrencyCode = $(event.target).find('option:selected').val();
+
+                var currentCurrency = this.getCurrencies().find(function (e, i, array) {
+                    return e.value == currentCurrencyCode ? true : false
+                });
+                if (!currentCurrency) return;
+
+                var shopCurrencyValue = this.getCurrencies().find(function (e, i, array) {
+                    return e.value == shopCurrency ? true : false
+                });
+                if (currentCurrencyCode === 'BTC') {
+                    total = (shopCurrencyValue.body.rate_btc * total);
+                } else {
+                    total = (shopCurrencyValue.body.rate_btc * total) / currentCurrency.body.rate_btc;
+                }
+                total = total.toFixed(5);
+                elemToChange.val(total + ' ' + currentCurrencyCode);
+
+                window.checkoutConfig.payment.coinpayments.currentData = {
+                    total: total,
+                    currency: currentCurrencyCode
+                };
+            },
+            /**
+             *
              * @returns {boolean}
              */
             getAllowPlaceOrder: function () {
@@ -106,19 +192,49 @@ define(
              *
              * @param currency
              * @param value
-             * @param redirect
              */
-            createInvoice: function () {
+            saveCurrencyToQuote: function (currency, value) {
+                var quoteId = quote.getQuoteId();
+                var url = '/rest/V1/coinpayments/' + quoteId + '/currency';
+                var data = {
+                    'currency': currency,
+                    'value': value
+                };
                 $.ajax({
                     type: "POST",
-                    dataType: 'json',
+                    url: url,
                     contentType: "application/json",
-                    url: url.build(coin_invoice_create_url),
+                    data: JSON.stringify(data),
                     success: function (result) {
-                        if (result.coinInvoiceId) {
-                            window.location.href = result.redirectUrl;
-                        } else {
-                            window.location.href = result.cancelUrl;
+                        //TODO success logic
+                    },
+                    error: function (err) {
+                        //TODO error logic
+                    }
+                });
+            },
+            /**
+             *
+             * @param currency
+             * @param value
+             * @param redirect
+             */
+            createTransaction: function (currency, value, redirect) {
+                var quoteId = quote.getQuoteId();
+                var url = '/rest/V1/coinpayments/' + quoteId + '/transaction';
+                var data = {
+                    'currency': currency,
+                    'value': value
+                };
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (result) {
+                        console.log(result);
+                        if (redirect) {
+                            window.location.replace(redirect);
                         }
                     },
                     error: function (err) {
@@ -130,8 +246,5 @@ define(
                 });
             }
         });
-        window.a = a;
-        return a;
     }
-)
-;
+);
