@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Coinpayments_CoinPayments::styles.css"/>
+        <link src="Coinpayments_CoinPayments::js/invoice-validate.js"/>
+        <link src="Coinpayments_CoinPayments::js/webhooks-validate.js"/>
+    </head>
+    <body>
+        <referenceContainer name="js">
+            <block class="Magento\Backend\Block\Template" template="Coinpayments_CoinPayments::js_vars.phtml"
+                   name="custom_js_backend"/>
+        </referenceContainer>
+    </body>
+</page>
