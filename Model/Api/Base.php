@@ -82,10 +82,10 @@ class Base
     {
         $paymentConf = $this->getPaymentConfig();
         $baseConf = $this->getBaseConfig();
-        
+
         $paymentConf['public_key'] = isset($paymentConf['public_key']) ? $paymentConf['public_key'] : '';
         $paymentConf['api_version'] = isset($paymentConf['api_version']) ? $paymentConf['api_version'] : '1';
-        
+
         $additionalData = [
             'version' => $baseConf['api_version'],
             'cmd' => $cmd,
@@ -112,7 +112,7 @@ class Base
     public function generateHmac($data, $secretKey = null)
     {
         if (!$secretKey) {
-            $secretKey = $this->getPaymentConfig('secret_key');
+            $secretKey = $this->getPaymentConfig('secret_key') ?: '';
         }
         return hash_hmac('sha512', http_build_query($data), $secretKey);
     }
