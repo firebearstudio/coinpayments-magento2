@@ -68,22 +68,27 @@ class CoinPaymentsConfigProvider implements ConfigProviderInterface
         $this->_curl->post($coinpaymentsApi, $data);
         $response = json_decode($this->_curl->getBody());
 
-        $currencies = ['error' => $response->error];
-        $acceptedCurrencies = ['error' => $response->error];
-        if ($response->error == 'ok') {
-            $currencies = [];
-            $acceptedCurrencies = [];
-            foreach ($response->result as $key => $item) {
-                $elm = [
-                    'value' => $key,
-                    'body' => $item,
-                    'name' => $item->name
-                ];
-                $currencies[] = $elm;
-                if (isset($item->accepted) && $item->accepted == '1') {
-                    $acceptedCurrencies[] = $elm;
+        if (!is_null($response) && property_exists($response, 'error') && property_exists($response, 'result')) {
+            $currencies = ['error' => $response->error];
+            $acceptedCurrencies = ['error' => $response->error];
+            if ($response->error == 'ok') {
+                $currencies = [];
+                $acceptedCurrencies = [];
+                foreach ($response->result as $key => $item) {
+                    $elm = [
+                        'value' => $key,
+                        'body' => $item,
+                        'name' => $item->name
+                    ];
+                    $currencies[] = $elm;
+                    if (isset($item->accepted) && $item->accepted == '1') {
+                        $acceptedCurrencies[] = $elm;
+                    }
                 }
             }
+        } else {
+            $currencies = ['error' => 'Could not load currencies list.'];
+            $acceptedCurrencies = ['error' => 'Could not load currencies list.'];
         }
 
         return [
